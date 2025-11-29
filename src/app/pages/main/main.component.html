@@ -1,1 +1,148 @@
-<h1>Привет :) Это твоё портфолио. Есть идеи ? ;)</h1>
+<div class="main">
+  <section class="main__currency">
+    <tui-textfield class="main__currency-item">
+      <label tuiLabel>Курс CNY-KZT (дробные через точку)</label>
+      <input
+        placeholder="Введи курс"
+        tuiTextfield
+        [(ngModel)]="uanCurrency"
+      />
+    </tui-textfield>
+    <tui-textfield class="main__currency-item">
+      <label tuiLabel>Курс RUB-KZT (дробные через точку)</label>
+      <input
+        placeholder="Введи курс"
+        tuiTextfield
+        [(ngModel)]="kztCurrency"
+      />
+    </tui-textfield>
+  </section>
+
+  <tui-scrollbar>
+    <tui-loader size="xl" [overlay]="true" [showLoader]="isLoading()">
+      <table
+        tuiTable
+        class="table"
+        [columns]="columns"
+      >
+        <thead>
+        <tr tuiThGroup>
+          <th tuiTh [sticky]="true">Товар</th>
+          <th tuiTh>Себес</th>
+          <th tuiTh>Себес + 15%</th>
+          <th tuiTh>Цена конкурента</th>
+          <th tuiTh>Моя цена</th>
+          <th tuiTh>Прибыль</th>
+          <th tuiTh></th>
+        </tr>
+        </thead>
+
+        <tbody tuiTbody [data]="store()">
+        <tr *ngFor="let item of store()" tuiTr>
+          <!--Товар-->
+          <th *tuiCell="'title'" tuiTd>
+            {{ item.title }}
+          </th>
+          <!--Себес-->
+          <td *tuiCell="'cost_price'" tuiTd>
+            <tui-chip size="s" appearance="outline">
+              {{ item.cost_price | tuiFormatNumber | async }} CNY
+            </tui-chip>
+          </td>
+
+          <!--Себес + 15%-->
+          @let cost_price_upd = item.cost_price * 1.15 * uanCurrency;
+          <td *tuiCell="'cost_price_upd'" tuiTd>
+            <div class="table__cell-item">
+              <tui-chip size="s" appearance="primary">
+                {{ cost_price_upd  | tuiFormatNumber: { precision: 0 } | async }} KZT
+              </tui-chip>
+
+              <tui-chip size="s" appearance="secondary">
+                {{ cost_price_upd / kztCurrency  | tuiFormatNumber: { precision: 0 } | async }} RUB
+              </tui-chip>
+            </div>
+          </td>
+
+          <!--Цена конкурента-->
+          @let competitors_price = item.competitors_price;
+          <td *tuiCell="'competitors_price'" tuiTd>
+            <div class="table__cell-item">
+              <tui-chip size="s" appearance="primary">
+                {{ competitors_price * kztCurrency  | tuiFormatNumber: { precision: 0 } | async }} KZT
+              </tui-chip>
+
+              <tui-chip size="s" appearance="secondary">
+                {{ competitors_price | tuiFormatNumber | async }} RUB
+              </tui-chip>
+            </div>
+          </td>
+
+          <!--Моя цена-->
+          <td *tuiCell="'my_cost'" tuiTd>
+            @let rub = item.my_cost;
+
+            <div class="table__cell-item">
+              <tui-chip size="s" appearance="primary">
+                {{ rub * kztCurrency | tuiFormatNumber: { precision: 0 } | async }} KZT
+              </tui-chip>
+
+              <tui-chip size="s" appearance="secondary">
+                {{ rub | tuiFormatNumber | async }} RUB
+              </tui-chip>
+            </div>
+          </td>
+
+          <!--Моржа-->
+          <td *tuiCell="'result'" tuiTd>
+            @let result = competitors_price * kztCurrency - cost_price_upd;
+
+            <div class="table__cell-item">
+              <tui-chip size="s" appearance="primary">
+                {{ result | tuiFormatNumber: { precision: 0 } | async }} KZT
+              </tui-chip>
+
+              <tui-chip size="s" appearance="secondary">
+                {{ result / kztCurrency  | tuiFormatNumber: { precision: 0 } | async }} RUB
+              </tui-chip>
+            </div>
+          </td>
+
+          <td *tuiCell="'operations'" tuiTd>
+            <button
+              size="s"
+              tuiIconButton
+              appearance="flat"
+              iconStart="pencil"
+              type="button"
+              (click)="editOne(item)"
+            >
+              Редактировать товар
+            </button>
+            <button
+              size="s"
+              tuiIconButton
+              appearance="flat-destructive"
+              iconStart="trash"
+              type="button"
+              (click)="deleteOne(item)"
+            >
+              Удалить товар
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </tui-loader>
+  </tui-scrollbar>
+
+  <button
+    size="m"
+    tuiButton
+    appearance="primary"
+    type="button"
+    (click)="addOne()"
+  >
+    Добавить товар
+  </button>
+</div>

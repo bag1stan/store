@@ -1,0 +1,25 @@
+<div style="display: flex; flex-direction: column; gap: 24px; padding-top: 24px">
+  @if (context.data?.content; as content) {
+    {{content}}
+  }
+  <div style="display: flex; place-content: flex-end; gap: 16px">
+    @if (context.data?.secondaryButtonText; as secondaryButtonText) {
+      <button
+        tuiButton
+        type="button"
+        appearance="flat"
+        (click)="onSecondaryButtonClick()">
+        {{ secondaryButtonText }}
+      </button>
+    }
+    @if (context.data?.primaryButtonText; as primaryButtonText) {
+      <button
+        tuiButton
+        type="button"
+        appearance="accent"
+        (click)="onPrimaryButtonClick()">
+        {{ primaryButtonText }}
+      </button>
+    }
+  </div>
+</div>

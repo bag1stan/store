@@ -1,0 +1,38 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-x: hidden;
+
+  &__currency {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    align-items: center;
+
+    &-item {
+      min-width: 50%;
+    }
+  }
+}
+
+.table {
+  &__cell {
+    &-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}

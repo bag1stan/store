@@ -1,0 +1,69 @@
+<form [formGroup]="form" class="add-one">
+  <tui-textfield>
+    <label tuiLabel>Название</label>
+    <input
+      placeholder="Введи название"
+      tuiTextfield
+      formControlName="title"
+    />
+  </tui-textfield>
+
+  <tui-textfield
+    iconStart="japanese-yen"
+    tuiTextfieldSize="m"
+  >
+    <label tuiLabel>Себестоимость</label>
+    <input
+      placeholder="Введи цифру в юанях"
+      tuiInputNumber
+      formControlName="cost_price"
+    />
+  </tui-textfield>
+
+  <tui-textfield
+    iconStart="russian-ruble"
+    tuiTextfieldSize="m"
+  >
+    <label tuiLabel>Цена конкурента</label>
+    <input
+      placeholder="Введи цифру в рублях"
+      tuiInputNumber
+      formControlName="competitors_price"
+    />
+  </tui-textfield>
+
+  <tui-textfield
+    [iconStart]="kztSvgIcon"
+    tuiTextfieldSize="m"
+  >
+    <label tuiLabel>Моя цена</label>
+    <input
+      placeholder="Введи цифру в тенге"
+      tuiInputNumber
+      formControlName="my_cost"
+    />
+  </tui-textfield>
+
+<!--  <tui-textfield-->
+<!--    iconStart="russian-ruble"-->
+<!--    tuiTextfieldSize="m"-->
+<!--  >-->
+<!--    <label tuiLabel>Цена у конкурента №3</label>-->
+<!--    <input-->
+<!--      placeholder="Введи цифру в рублях"-->
+<!--      tuiInputNumber-->
+<!--      formControlName="competitors_price_3"-->
+<!--    />-->
+<!--  </tui-textfield>-->
+
+
+  <button
+    size="m"
+    tuiButton
+    appearance="primary"
+    type="submit"
+    (click)="addOne()"
+  >
+    {{ data ? 'Редактировать товар' : 'Добавить товар' }}
+  </button>
+</form>
