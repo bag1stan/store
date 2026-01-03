@@ -1,1 +1,0 @@
-import"./chunk-7CGTOI24.js";var o=[{path:"",loadComponent:()=>import("./chunk-CCNT7V7Q.js").then(t=>t.LayoutComponent),children:[{path:"",redirectTo:"main",pathMatch:"full"},{path:"main",loadComponent:()=>import("./chunk-NI6SY76N.js").then(t=>t.MainComponent)},{path:"**",redirectTo:"main"}]}];export{o as featuresLayoutRoutes};
