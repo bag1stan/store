@@ -34,16 +34,15 @@
       <table tuiTable class="table">
         <thead>
         <tr>
-          <th tuiTh [sticky]="true" style="display: flex; justify-content: center; align-items: center">
+          <th tuiTh [sticky]="true" style="vertical-align: middle; text-align: center;">
             <button
-              style="place-content: center"
               tuiIconButton
               size="s"
               appearance="flat"
               [iconStart]="isDarkTheme() ? 'moon' : 'sun'"
               (click)="onThemeChange()">Change theme</button>
           </th>
-          <th tuiTh *ngFor="let item of store() | sortById" style="text-align: center">
+          <th [sticky]="true" tuiTh *ngFor="let item of store() | sortById" style="text-align: center">
             <div>{{ item.title }}</div>
           </th>
         </tr>
