@@ -4,8 +4,10 @@ import {
   TuiFormatNumberPipe,
   TuiLabel,
   TuiLoader,
+  TuiNumberFormat,
   TuiScrollbar,
   TuiTextfieldComponent,
+  TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
 import { ApiService } from '../../services/api.service';
 import { delayWhen, mergeMap, tap } from 'rxjs';
@@ -42,6 +44,8 @@ import { StateService } from '../../services/state.service';
     TuiInputNumber,
     SortByIdPipe,
     NgStyle,
+    TuiTextfieldOptionsDirective,
+    TuiNumberFormat,
   ],
   providers: [DialogService],
   templateUrl: './main.component.html',

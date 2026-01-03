@@ -1,34 +1,4 @@
 <div class="main">
-  <section class="main__currency">
-    <div style="display:flex; gap: 8px; width: 100%; align-items: center">
-      <tui-textfield class="main__currency-item">
-        <label tuiLabel>CNY-KZT</label>
-        <input
-          placeholder="Введи курс"
-          tuiInputNumber
-          [(ngModel)]="uanCurrency"
-        />
-      </tui-textfield>
-      <tui-textfield class="main__currency-item">
-        <label tuiLabel>RUB-KZT</label>
-        <input
-          placeholder="Введи курс"
-          tuiInputNumber
-          [(ngModel)]="kztCurrency"
-        />
-      </tui-textfield>
-
-      <tui-textfield class="main__currency-item">
-        <label tuiLabel>+ %</label>
-        <input
-          placeholder="Введи процент"
-          tuiInputNumber
-          [(ngModel)]="percent"
-        />
-      </tui-textfield>
-    </div>
-  </section>
-
   <tui-scrollbar>
     <tui-loader size="xl" [overlay]="true" [showLoader]="isLoading()">
       <table tuiTable class="table">
@@ -138,13 +108,46 @@
     </tui-loader>
   </tui-scrollbar>
 
-  <button
-    size="m"
-    tuiButton
-    appearance="primary"
-    type="button"
-    (click)="addOne()"
-  >
-    Добавить товар
-  </button>
+
+  <section class="main__currency">
+    <div style="display:flex; gap: 8px; width: 100%; align-items: center">
+      <tui-textfield class="main__currency-item" [tuiTextfieldCleaner]="false">
+        <label tuiLabel>CNY</label>
+        <input
+          placeholder="Введи курс"
+          tuiInputNumber
+          [(ngModel)]="uanCurrency"
+        />
+      </tui-textfield>
+      <tui-textfield class="main__currency-item" [tuiTextfieldCleaner]="false">
+        <label tuiLabel>RUB</label>
+        <input
+          placeholder="Введи курс"
+          tuiInputNumber
+          [tuiNumberFormat]="{precision: 1}"
+          [(ngModel)]="kztCurrency"
+        />
+      </tui-textfield>
+
+      <tui-textfield class="main__currency-item"  [tuiTextfieldCleaner]="false">
+        <label tuiLabel>+ %</label>
+        <input
+          placeholder="Введи процент"
+          tuiInputNumber
+          [(ngModel)]="percent"
+        />
+      </tui-textfield>
+
+      <button
+        size="l"
+        tuiIconButton
+        appearance="primary"
+        type="button"
+        iconStart="plus"
+        (click)="addOne()"
+      >
+        Добавить товар
+      </button>
+    </div>
+  </section>
 </div>
