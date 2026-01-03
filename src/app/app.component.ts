@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TuiRoot } from '@taiga-ui/core';
+import { StateService } from './services/state.service';
 
 @Component({
   selector: 'app-root',
@@ -9,5 +10,7 @@ import { TuiRoot } from '@taiga-ui/core';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'olikeek';
+  title = 'kz_store';
+
+  readonly isDarkTheme = inject(StateService).isDarkTheme;
 }

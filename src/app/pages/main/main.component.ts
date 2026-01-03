@@ -1,5 +1,4 @@
 import { Component, inject, signal } from '@angular/core';
-import { AsyncPipe, NgForOf } from '@angular/common';
 import {
   TuiButton,
   TuiFormatNumberPipe,
@@ -7,46 +6,42 @@ import {
   TuiLoader,
   TuiScrollbar,
   TuiTextfieldComponent,
-  TuiTextfieldDirective,
 } from '@taiga-ui/core';
-import {
-  TuiTableCell,
-  TuiTableDirective,
-  TuiTableTbody,
-  TuiTableTd,
-  TuiTableTh,
-  TuiTableThGroup,
-  TuiTableTr,
-} from '@taiga-ui/addon-table';
 import { ApiService } from '../../services/api.service';
 import { delayWhen, mergeMap, tap } from 'rxjs';
 import { Product } from '../../interfaces/product.interface';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogService } from '../../services/dialog.service';
-import { TuiChip } from '@taiga-ui/kit';
+import { TuiChip, TuiInputNumber } from '@taiga-ui/kit';
+import { AsyncPipe, NgForOf, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { TuiTableDirective, TuiTableTbody, TuiTableTd, TuiTableTh } from '@taiga-ui/addon-table';
+import { SortByIdPipe } from '../../pipes/sort-by-id.pipe';
+import { StateService } from '../../services/state.service';
 
 @Component({
   selector: 'app-main',
   imports: [
-    NgForOf,
-    TuiFormatNumberPipe,
-    AsyncPipe,
-    TuiTableDirective,
-    TuiTableThGroup,
-    TuiTableTh,
-    TuiTableTbody,
-    TuiTableTr,
-    TuiTableCell,
-    TuiTableTd,
     TuiButton,
     TuiLoader,
     ReactiveFormsModule,
     TuiLabel,
     TuiTextfieldComponent,
-    TuiTextfieldDirective,
     FormsModule,
     TuiScrollbar,
     TuiChip,
+    TuiFormatNumberPipe,
+    AsyncPipe,
+    NgSwitchCase,
+    NgSwitch,
+    NgForOf,
+    NgSwitchDefault,
+    TuiTableTh,
+    TuiTableTd,
+    TuiTableTbody,
+    TuiTableDirective,
+    TuiInputNumber,
+    SortByIdPipe,
+    NgStyle,
   ],
   providers: [DialogService],
   templateUrl: './main.component.html',
@@ -55,17 +50,42 @@ import { TuiChip } from '@taiga-ui/kit';
 export class MainComponent {
   private readonly api = inject(ApiService);
   private readonly dialogService = inject(DialogService);
+  private readonly state = inject(StateService);
 
-  readonly store = signal<Product[]>([])
+  readonly isDarkTheme = this.state.isDarkTheme;
+  readonly store = this.state.store;
+
   readonly isLoading = signal(false);
-
-  readonly columns = ['title', 'cost_price', 'cost_price_upd', 'competitors_price', 'my_cost', 'result', 'operations']
 
   kztCurrency = 6.6;
   uanCurrency = 75;
+  percent = 15;
 
   constructor() {
     this.loadData();
+  }
+
+  readonly fields = [
+    { key: 'my_cost', label: 'Vinyl' },
+    { key: 'competitors_price', label: 'Рынок' },
+    { key: 'cost_price', label: 'Себес' },
+    { key: 'result', label: 'Маржа' },
+    { key: 'operations'}
+  ];
+
+  onThemeChange(): void {
+    this.state.toggleTheme();
+  }
+
+  computeResult(item: Product): number {
+    const compKzt = item.my_cost;
+    const costUpd = this.computeCostPriceUpd(item);
+    return compKzt - costUpd;
+  }
+
+  computeCostPriceUpd(item: Product): number {
+    const percent = (this.percent + 100) / 100
+    return item.cost_price * percent * this.uanCurrency;
   }
 
   private loadData(): void {
@@ -83,7 +103,7 @@ export class MainComponent {
       mergeMap((product) => this.api.addOne(product)),
       tap((product) => {
         this.isLoading.set(false)
-        this.add(product);
+        this.state.addProduct(product);
       })
     )
       .subscribe();
@@ -96,7 +116,7 @@ export class MainComponent {
       mergeMap((product) => this.api.updateOne(product)),
       tap((product) => {
         this.isLoading.set(false)
-        this.update(product);
+        this.state.updateProduct(product);
       })
     )
       .subscribe();
@@ -108,22 +128,8 @@ export class MainComponent {
       delayWhen(() => this.api.deleteOne(id)),
       tap(() => {
         this.isLoading.set(false)
-        this.delete(id);
+        this.state.deleteProduct(id);
       })
     ).subscribe()
-  }
-
-  private add(product: Product) {
-    this.store.update((v) => [...v, product]);
-  }
-
-  private update(updatedProduct: Product) {
-    this.store.update((products) => products.map(
-      (v) => v.id === updatedProduct.id ? updatedProduct : v)
-    );
-  }
-
-  private delete(id: Product['id']) {
-    this.store.update((products) => products.filter((v) => v.id !== id));
   }
 }

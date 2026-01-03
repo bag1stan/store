@@ -7,7 +7,6 @@ import {
   TuiLabel,
   TuiTextfieldComponent,
   TuiTextfieldDirective,
-  TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
 import { TuiInputNumber } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
@@ -21,7 +20,6 @@ import { Product } from '../../interfaces/product.interface';
     TuiLabel,
     TuiTextfieldDirective,
     ReactiveFormsModule,
-    TuiTextfieldOptionsDirective,
     TuiInputNumber,
     TuiButton,
   ],
@@ -37,11 +35,11 @@ export class AddOneDialogComponent {
 
   readonly kztSvgIcon = kztSvg;
 
-  readonly form = this.fb.nonNullable.group({
+  readonly form = this.fb.group({
     title: ['', Validators.required],
-    cost_price: [0, Validators.required],
-    competitors_price: [0],
-    my_cost: [0],
+    cost_price: this.fb.control<number | null>(null, Validators.required),
+    competitors_price: this.fb.control<number | null>(null),
+    my_cost: this.fb.control<number | null>(null),
   })
 
   constructor() {
