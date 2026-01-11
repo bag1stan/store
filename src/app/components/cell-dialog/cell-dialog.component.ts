@@ -30,6 +30,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { SortByIdPipe } from '../../pipes/sort-by-id.pipe';
 import { FilterWithAmountPipe } from '../../pipes/filter-with-amount.pipe';
+import { FilterByAddedSellPipe } from '../../pipes/filter-by-added-sell.pipe';
 
 
 @Component({
@@ -55,6 +56,7 @@ import { FilterWithAmountPipe } from '../../pipes/filter-with-amount.pipe';
     TuiFormatNumberPipe,
     TuiSurface,
     FilterWithAmountPipe,
+    FilterByAddedSellPipe,
   ],
   providers: [
     tuiItemsHandlersProvider({
@@ -80,6 +82,8 @@ export class CellDialogComponent {
 
   readonly items =  computed(() => this.stateService.state());
   readonly isLoading = signal(false);
+
+  readonly addedSellIds = signal<number[]>([]);
 
   readonly form = this.fb.array<FormGroup>([]);
   readonly cellItemControl = this.fb.control<Product | null>(null);
@@ -148,6 +152,8 @@ export class CellDialogComponent {
   }
 
   private addNewGroup({ id, title, amount }: Product): void {
+    this.addedSellIds.update(v => [ ...v, id ]);
+
     this.form.push(
       this.fb.nonNullable.group({
         id,
@@ -158,7 +164,10 @@ export class CellDialogComponent {
   }
 
   deleteOne(index: number): void {
-    this.form.removeAt(index)
+    const sellId = this.form.at(index).value.id;
+    this.addedSellIds.update(v => v.filter((id) => id !== sellId));
+
+    this.form.removeAt(index);
   }
 
   onSellButtonClick() {
