@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import {
   TuiButton,
   TuiFormatNumberPipe,
@@ -57,28 +57,42 @@ export class MainComponent {
   private readonly state = inject(StateService);
 
   readonly isDarkTheme = this.state.isDarkTheme;
-  readonly store = this.state.store;
+  readonly isFullScreen = this.state.isFullScreen;
+
+  readonly store = this.state.state;
 
   readonly isLoading = signal(false);
 
-  kztCurrency = 6.6;
-  uanCurrency = 75;
-  percent = 15;
+  readonly kztCurrency = this.state.kztCurrency;
+  readonly uanCurrency = this.state.uanCurrency;
+  readonly percent = this.state.percent;
 
   constructor() {
     this.loadData();
   }
 
-  readonly fields = [
-    { key: 'my_cost', label: 'Vinyl' },
-    { key: 'competitors_price', label: 'Рынок' },
-    { key: 'cost_price', label: 'Себес' },
-    { key: 'result', label: 'Маржа' },
-    { key: 'operations'}
-  ];
+  readonly fields = computed(() => {
+    const apiRows = [
+      { key: 'my_cost', label: 'Vinyl' },
+      { key: 'competitors_price', label: 'Рынок' },
+      { key: 'cost_price', label: 'Себес' },
+      { key: 'result', label: 'Маржа' },
+      { key: 'amount', label: 'Наличие\nПродано' },
+    ];
+
+    return this.isFullScreen() ? apiRows : [...apiRows, { key: 'operations', label: '' }];
+  });
 
   onThemeChange(): void {
     this.state.toggleTheme();
+  }
+
+  onFullScreenModeChange(): void {
+    this.state.toggleFullScreen();
+  }
+
+  onCellButtonClick() {
+    this.dialogService.openCellDialog().subscribe();
   }
 
   computeResult(item: Product): number {
@@ -88,8 +102,8 @@ export class MainComponent {
   }
 
   computeCostPriceUpd(item: Product): number {
-    const percent = (this.percent + 100) / 100
-    return item.cost_price * percent * this.uanCurrency;
+    const percent = (this.percent() + 100) / 100
+    return item.cost_price * percent * this.uanCurrency();
   }
 
   private loadData(): void {

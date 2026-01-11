@@ -15,8 +15,7 @@ export class ApiService {
     return this.http.post<Product>(`${this.baseUrl}/product_price`, product);
   }
 
-  updateOne(product: Product) {
-    console.log('updateOne', product);
+  updateOne(product: Pick<Product, 'id'> & Partial<Omit<Product, 'id'>>) {
     return this.http.put<Product>(`${this.baseUrl}/product_price/${product.id}`, product);
   }
 

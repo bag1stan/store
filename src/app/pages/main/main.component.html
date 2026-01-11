@@ -7,10 +7,10 @@
           <th tuiTh [sticky]="true" style="vertical-align: middle; text-align: center;">
             <button
               tuiIconButton
-              size="s"
+              size="l"
               appearance="flat"
-              [iconStart]="isDarkTheme() ? 'moon' : 'sun'"
-              (click)="onThemeChange()">Change theme</button>
+              iconStart="frame"
+              (click)="onFullScreenModeChange()">Change screen mode</button>
           </th>
           <th [sticky]="true" tuiTh *ngFor="let item of store() | sortById" style="text-align: center">
             <div>{{ item.title }}</div>
@@ -19,7 +19,7 @@
         </thead>
 
         <tbody tuiTbody [data]="store() | sortById">
-        <tr *ngFor="let f of fields; let lastField = last">
+        <tr *ngFor="let f of fields(); let lastField = last">
           <th tuiTd>{{ f.label }}</th>
 
           <!-- для каждого товара выводим значение поля -->
@@ -38,7 +38,7 @@
                     </tui-chip>
 
                     <tui-chip size="s" appearance="secondary">
-                      {{ (computeCostPriceUpd(item) / kztCurrency) | tuiFormatNumber: { precision: 0 } | async }} RUB
+                      {{ (computeCostPriceUpd(item) / kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} RUB
                     </tui-chip>
                   </div>
                 </ng-container>
@@ -47,7 +47,7 @@
                 <ng-container *ngSwitchCase="'competitors_price'">
                   <div class="table__cell-item">
                     <tui-chip size="s" appearance="primary">
-                      {{ (item.competitors_price * kztCurrency) | tuiFormatNumber: { precision: 0 } | async }} KZT
+                      {{ (item.competitors_price * kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} KZT
                     </tui-chip>
                     <tui-chip size="s" appearance="secondary">
                       {{ item.competitors_price | tuiFormatNumber | async }} RUB
@@ -62,7 +62,7 @@
                       {{ (item.my_cost) | tuiFormatNumber: { precision: 0 } | async }} KZT
                     </tui-chip>
                     <tui-chip size="s" appearance="secondary">
-                      {{ item.my_cost / kztCurrency | tuiFormatNumber: { precision: 0 } | async }} RUB
+                      {{ item.my_cost / kztCurrency() | tuiFormatNumber: { precision: 0 } | async }} RUB
                     </tui-chip>
                   </div>
                 </ng-container>
@@ -74,27 +74,41 @@
                       {{ computeResult(item) | tuiFormatNumber: { precision: 0 } | async }} KZT
                     </tui-chip>
                     <tui-chip size="s" appearance="secondary">
-                      {{ (computeResult(item) / kztCurrency) | tuiFormatNumber: { precision: 0 } | async }} RUB
+                      {{ (computeResult(item) / kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} RUB
                     </tui-chip>
                   </div>
                 </ng-container>
 
-                <ng-container *ngSwitchCase="'operations'">
-                  <div>
-                    <button
-                      tuiIconButton
-                      size="m"
-                      appearance="flat"
-                      iconStart="pencil"
-                      (click)="editOne(item)">Ред.</button>
-                    <button
-                      tuiIconButton
-                      size="m"
-                      appearance="flat-destructive"
-                      iconStart="trash"
-                      (click)="deleteOne(item)">Удал.</button>
+                <!-- Наличие -->
+                <ng-container *ngSwitchCase="'amount'">
+                  <div class="table__cell-item">
+                    <tui-chip size="s" [appearance]="item.amount ? 'outline' : 'outline-destructive'">
+                      {{ item.amount | tuiFormatNumber | async }} шт.
+                    </tui-chip>
+                    <tui-chip size="s" appearance="secondary">
+                      {{ item.sold | tuiFormatNumber | async }} шт.
+                    </tui-chip>
                   </div>
                 </ng-container>
+
+                @if(!isFullScreen()) {
+                  <ng-container *ngSwitchCase="'operations'">
+                    <div>
+                      <button
+                        tuiIconButton
+                        size="m"
+                        appearance="flat"
+                        iconStart="pencil"
+                        (click)="editOne(item)">Ред.</button>
+                      <button
+                        tuiIconButton
+                        size="m"
+                        appearance="flat-destructive"
+                        iconStart="trash"
+                        (click)="deleteOne(item)">Удал.</button>
+                    </div>
+                  </ng-container>
+                }
 
                 <ng-container *ngSwitchDefault>
                   —
@@ -108,46 +122,65 @@
     </tui-loader>
   </tui-scrollbar>
 
+  @if(!isFullScreen()) {
+    <section class="main__currency">
+      <div style="display:flex; gap: 8px; width: 100%; align-items: center">
+        <button
+          tuiIconButton
+          size="l"
+          appearance="primary"
+          [iconStart]="isDarkTheme() ? 'moon' : 'sun'"
+          (click)="onThemeChange()">Change theme</button>
 
-  <section class="main__currency">
-    <div style="display:flex; gap: 8px; width: 100%; align-items: center">
-      <tui-textfield class="main__currency-item" [tuiTextfieldCleaner]="false">
-        <label tuiLabel>CNY</label>
-        <input
-          placeholder="Введи курс"
-          tuiInputNumber
-          [(ngModel)]="uanCurrency"
-        />
-      </tui-textfield>
-      <tui-textfield class="main__currency-item" [tuiTextfieldCleaner]="false">
-        <label tuiLabel>RUB</label>
-        <input
-          placeholder="Введи курс"
-          tuiInputNumber
-          [tuiNumberFormat]="{precision: 1}"
-          [(ngModel)]="kztCurrency"
-        />
-      </tui-textfield>
+        <tui-textfield class="main__currency-item" [tuiTextfieldCleaner]="false">
+          <label tuiLabel>CNY</label>
+          <input
+            placeholder="Введи курс"
+            tuiInputNumber
+            [(ngModel)]="uanCurrency"
+          />
+        </tui-textfield>
+        <tui-textfield class="main__currency-item" [tuiTextfieldCleaner]="false">
+          <label tuiLabel>RUB</label>
+          <input
+            placeholder="Введи курс"
+            tuiInputNumber
+            [tuiNumberFormat]="{precision: 1}"
+            [(ngModel)]="kztCurrency"
+          />
+        </tui-textfield>
 
-      <tui-textfield class="main__currency-item"  [tuiTextfieldCleaner]="false">
-        <label tuiLabel>+ %</label>
-        <input
-          placeholder="Введи процент"
-          tuiInputNumber
-          [(ngModel)]="percent"
-        />
-      </tui-textfield>
+        <tui-textfield class="main__currency-item"  [tuiTextfieldCleaner]="false">
+          <label tuiLabel>+ %</label>
+          <input
+            placeholder="Введи процент"
+            tuiInputNumber
+            [(ngModel)]="percent"
+          />
+        </tui-textfield>
 
-      <button
-        size="l"
-        tuiIconButton
-        appearance="primary"
-        type="button"
-        iconStart="plus"
-        (click)="addOne()"
-      >
-        Добавить товар
-      </button>
-    </div>
-  </section>
+        <button
+          size="l"
+          tuiIconButton
+          appearance="primary"
+          type="button"
+          iconStart="plus"
+          (click)="addOne()"
+        >
+          Добавить товар
+        </button>
+
+        <button
+          size="l"
+          tuiIconButton
+          iconStart="trending-up"
+          appearance="primary"
+          type="button"
+          (click)="onCellButtonClick()"
+        >
+          Продать
+        </button>
+      </div>
+    </section>
+  }
 </div>
