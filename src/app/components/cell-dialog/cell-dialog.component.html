@@ -1,0 +1,108 @@
+<div class="cell-dialog">
+  <div style="display: flex; flex-direction: column; gap: 16px;">
+    <div tuiSurface="outline" class="statistic">
+      <h3 style="margin: 0;">Продано</h3>
+
+      <div style="display:flex; gap: 16px;">
+        <tui-chip tuiFade size="s" appearance="secondary" >
+          {{ soldAmount() }} шт.
+        </tui-chip>
+
+        @if (sellAmount(); as amount) {
+          <tui-chip tuiFade size="s" appearance="primary" >
+            + {{ amount }} шт.
+          </tui-chip>
+        }
+      </div>
+    </div>
+
+    <div tuiSurface="outline" class="statistic">
+      <h3 style="margin: 0;">Прибыль</h3>
+
+      <div style="display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; gap: 16px; justify-content: space-between">
+          <tui-chip size="s" appearance="secondary">
+            {{ (sumSoldInKzt() / kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} RUB
+          </tui-chip>
+          <tui-chip size="s" appearance="primary">
+            {{ sumSoldInKzt() | tuiFormatNumber: { precision: 0 } | async }} KZT
+          </tui-chip>
+        </div>
+
+        @if (sumSellInKzt(); as sum) {
+          <div style="display: flex; gap: 16px; justify-content: space-between">
+            <tui-chip size="s" appearance="secondary">
+              + {{ (sum / kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} RUB
+            </tui-chip>
+            <tui-chip size="s" appearance="primary">
+              + {{ sum | tuiFormatNumber: { precision: 0 } | async }} KZT
+            </tui-chip>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+
+  <tui-scrollbar style="flex-grow: 1">
+    <section class="sold-list">
+      @for(soldGroup of form.controls; track soldGroup) {
+        <form class="sold-item" [formGroup]="soldGroup">
+          <tui-chip tuiFade size="m" appearance="secondary" style="flex: 1 1 auto; display: flex; justify-content: space-between">
+            <span>{{soldGroup.controls['title'].value}}</span>
+            <span>{{soldGroup.controls['amount'].value}} шт.</span>
+          </tui-chip>
+
+          <tui-textfield style="min-width: 60px; max-width: fit-content; max-height: var(--tui-height-m);" [tuiTextfieldCleaner]="false">
+            <input
+              style="text-align: center;"
+              tuiInputNumber
+              formControlName="sold"
+            />
+          </tui-textfield>
+
+          <button
+            size="m"
+            tuiIconButton
+            appearance="outline-destructive"
+            type="button"
+            iconStart="x"
+            (click)="deleteOne($index)"
+          >
+            Удалить продажу
+          </button>
+        </form>
+      }
+    </section>
+  </tui-scrollbar>
+
+  <div class="actions">
+    <tui-select [formControl]="cellItemControl">
+      Добавить товар к продаже
+      <input
+        disabled
+        placeholder="Отсортированы как в таблице"
+        tuiTextfieldLegacy
+      />
+      <tui-data-list-wrapper
+        *tuiDataList
+        emptyContent="Нет товаров в наличии"
+        [items]="items() | tuiFilterByInput | sortById | filterWithAmount"
+      />
+    </tui-select>
+
+    <tui-loader style="width: 100%" size="m" [overlay]="true" [showLoader]="isLoading()">
+      <button
+        style="width: 100%"
+        size="m"
+        tuiButton
+        appearance="primary"
+        type="submit"
+        [disabled]="isLoading() || !form.length"
+        (click)="onSellButtonClick()"
+      >
+        Продать
+      </button>
+    </tui-loader>
+  </div>
+</div>

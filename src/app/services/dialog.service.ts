@@ -5,6 +5,7 @@ import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 import { AddOneDialogComponent } from '../components/add-one-dialog/add-one-dialog.component';
 import { filter } from 'rxjs';
 import { UiConfirmationDialogComponent } from '../components/confirm-dialog/ui-confirmation-dialog.component';
+import { CellDialogComponent } from '../components/cell-dialog/cell-dialog.component';
 
 @Injectable()
 export class DialogService {
@@ -16,7 +17,6 @@ export class DialogService {
       .open<Product>(new PolymorpheusComponent(AddOneDialogComponent, this.injector), {
         label: 'Добавление товара',
         size: 's',
-        dismissible: false,
       }).pipe(filter(Boolean))
   }
 
@@ -26,7 +26,6 @@ export class DialogService {
         data: product,
         label: 'Редактирование товара',
         size: 's',
-        dismissible: false,
       }).pipe(filter(Boolean))
   }
 
@@ -41,5 +40,13 @@ export class DialogService {
         secondaryButtonText: 'Не, это я зря быканул',
       }
     }).pipe(filter(Boolean))
+  }
+
+  openCellDialog() {
+    return this.dialogs
+      .open(new PolymorpheusComponent(CellDialogComponent, this.injector), {
+        size: 'page',
+        label: 'Склад'
+      }).pipe(filter(Boolean))
   }
 }

@@ -5,4 +5,6 @@ export interface Product {
   cost_price: number;
   competitors_price: number;
   my_cost: number;
+  amount: number;
+  sold: number;
 }

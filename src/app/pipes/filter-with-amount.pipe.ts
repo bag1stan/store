@@ -1,10 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Product } from '../interfaces/product.interface';
 
-@Pipe({ name: 'sortById' })
-export class SortByIdPipe implements PipeTransform {
+@Pipe({ name: 'filterWithAmount' })
+export class FilterWithAmountPipe implements PipeTransform {
 
   transform(value: readonly Product[]): Product[] {
-    return [...value].sort((a, b) => a.id - b.id);
+    return value.filter((product) => Boolean(product.amount));
   }
 }

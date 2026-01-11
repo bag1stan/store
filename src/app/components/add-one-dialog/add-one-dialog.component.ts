@@ -32,6 +32,7 @@ export class AddOneDialogComponent {
   private readonly context = injectContext<TuiDialogContext<unknown, Product | void>>();
 
   readonly data = this.context.data;
+  readonly isEditMode = Boolean(this.data);
 
   readonly kztSvgIcon = kztSvg;
 
@@ -40,10 +41,16 @@ export class AddOneDialogComponent {
     cost_price: this.fb.control<number | null>(null, Validators.required),
     competitors_price: this.fb.control<number | null>(null),
     my_cost: this.fb.control<number | null>(null),
+    amount: this.fb.control<number>(1, Validators.required),
+    sold: this.fb.control<number>(0, Validators.required),
   })
 
   constructor() {
     this.initFormValues()
+
+    if (!this.isEditMode) {
+      this.form.controls.sold.disable();
+    }
   }
 
   private initFormValues() {
@@ -60,7 +67,7 @@ export class AddOneDialogComponent {
       return;
     }
 
-    this.context.completeWith({...this.data, ...this.form.getRawValue()});
+    this.context.completeWith({ ...this.data, ...this.form.value });
   }
 
   showAlert(msg: string): void {

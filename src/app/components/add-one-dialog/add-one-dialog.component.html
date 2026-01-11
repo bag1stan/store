@@ -8,6 +8,26 @@
     />
   </tui-textfield>
 
+  <tui-textfield>
+    <label tuiLabel>В наличии</label>
+    <input
+      placeholder="Количество шт."
+      tuiInputNumber
+      formControlName="amount"
+    />
+  </tui-textfield>
+
+  @if (isEditMode) {
+    <tui-textfield>
+      <label tuiLabel>Продано</label>
+      <input
+        placeholder="Количество шт."
+        tuiInputNumber
+        formControlName="sold"
+      />
+    </tui-textfield>
+  }
+
   <tui-textfield iconStart="japanese-yen">
     <label tuiLabel>Себестоимость</label>
     <input
