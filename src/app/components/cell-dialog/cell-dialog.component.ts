@@ -5,6 +5,8 @@ import {
   TuiButton,
   TuiDataList,
   TuiDialogContext,
+  TuiExpandComponent,
+  TuiExpandContent,
   TuiFormatNumberPipe,
   TuiLoader,
   TuiScrollbar,
@@ -27,7 +29,7 @@ import { TuiComboBoxModule, TuiInputModule, TuiSelectModule } from '@taiga-ui/le
 import { catchError, EMPTY, filter, forkJoin, tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { SortByIdPipe } from '../../pipes/sort-by-id.pipe';
 import { FilterWithAmountPipe } from '../../pipes/filter-with-amount.pipe';
 import { FilterByAddedSellPipe } from '../../pipes/filter-by-added-sell.pipe';
@@ -57,6 +59,9 @@ import { FilterByAddedSellPipe } from '../../pipes/filter-by-added-sell.pipe';
     TuiSurface,
     FilterWithAmountPipe,
     FilterByAddedSellPipe,
+    NgTemplateOutlet,
+    TuiExpandComponent,
+    TuiExpandContent,
   ],
   providers: [
     tuiItemsHandlersProvider({
@@ -92,6 +97,32 @@ export class CellDialogComponent {
     return this.products().reduce((acc, product) => acc + product.sold, 0)
   })
 
+  readonly sumCostInKzt = computed(() => {
+    const products = this.stateService.state();
+
+    return products.reduce((acc, product) => {
+      if (!product.amount && !product.sold) {
+        return acc;
+      }
+
+      const price = this.computeCostPriceUpd(product);
+
+      return acc + (price * product.amount) + (price * product.sold);
+    }, 0)
+  })
+
+  readonly sumMyCostInKzt = computed(() => {
+    const products = this.stateService.state();
+
+    return products.reduce((acc, product) => {
+      if (!product.sold) {
+        return acc;
+      }
+
+      return acc + (product.my_cost * product.sold)
+    }, 0)
+  })
+
   readonly sumSoldInKzt = computed(() => {
     const products = this.stateService.state();
 
@@ -105,6 +136,22 @@ export class CellDialogComponent {
   })
 
   readonly formChanges = toSignal(this.form.valueChanges);
+
+  sumMyCostSellsInKzt = computed(() => {
+    const changes = this.formChanges();
+
+    if (!changes?.length) {
+      return null;
+    }
+
+    const sells = changes.map(({id}) =>
+      ({...this.productEntities()[id], ...changes.find(product => product.id === id ) })
+    );
+
+    return sells.reduce((acc, sell) => {
+      return acc + (sell.my_cost * sell.sold)
+    }, 0)
+  });
 
   readonly sellAmount = computed(() => {
     const changes = this.formChanges();
@@ -131,6 +178,8 @@ export class CellDialogComponent {
       return acc + (this.computeResult(sell) * sell.sold)
     }, 0)
   })
+
+  expanded = signal(false);
 
   constructor() {
     this.cellItemControl.valueChanges.pipe(

@@ -1,47 +1,74 @@
 <div class="cell-dialog">
-  <div style="display: flex; flex-direction: column; gap: 16px;">
-    <div tuiSurface="outline" class="statistic">
-      <h3 style="margin: 0;">Продано</h3>
+  <button
+    size="m"
+    tuiButton
+    type="button"
+    (click)="expanded.set(!expanded())"
+  >
+    {{ expanded() ? 'Скрыть' : 'Показать' }} статистику
+  </button>
 
-      <div style="display:flex; gap: 16px;">
-        <tui-chip tuiFade size="s" appearance="secondary" >
-          {{ soldAmount() }} шт.
-        </tui-chip>
 
-        @if (sellAmount(); as amount) {
-          <tui-chip tuiFade size="s" appearance="primary" >
-            + {{ amount }} шт.
-          </tui-chip>
-        }
-      </div>
-    </div>
+  <tui-expand [expanded]="expanded()">
+    <ng-template tuiExpandContent>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div tuiSurface="outline" class="statistic">
+          <div class="statistic__item">
+            <h3 style="margin: 0;">Продано</h3>
 
-    <div tuiSurface="outline" class="statistic">
-      <h3 style="margin: 0;">Прибыль</h3>
+            <div style="display:flex; gap: 16px;">
+              <tui-chip tuiFade size="s" appearance="secondary" >
+                {{ soldAmount() }} шт.
+              </tui-chip>
 
-      <div style="display: flex; flex-direction: column; gap: 16px">
-        <div style="display: flex; gap: 16px; justify-content: space-between">
-          <tui-chip size="s" appearance="secondary">
-            {{ (sumSoldInKzt() / kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} RUB
-          </tui-chip>
-          <tui-chip size="s" appearance="primary">
-            {{ sumSoldInKzt() | tuiFormatNumber: { precision: 0 } | async }} KZT
-          </tui-chip>
+              @if (sellAmount(); as amount) {
+                <tui-chip tuiFade size="s" appearance="primary" >
+                  + {{ amount }} шт.
+                </tui-chip>
+              }
+            </div>
+          </div>
         </div>
 
-        @if (sumSellInKzt(); as sum) {
-          <div style="display: flex; gap: 16px; justify-content: space-between">
-            <tui-chip size="s" appearance="secondary">
-              + {{ (sum / kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} RUB
-            </tui-chip>
-            <tui-chip size="s" appearance="primary">
-              + {{ sum | tuiFormatNumber: { precision: 0 } | async }} KZT
-            </tui-chip>
+        <div tuiSurface="outline" class="statistic">
+          <div class="statistic__item">
+            <h3 style="margin: 0;">Расходы</h3>
+
+            <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sumCostInKzt() }"/>
           </div>
-        }
+        </div>
+
+
+        <div tuiSurface="outline" class="statistic">
+          <div class="statistic__item">
+            <h3 style="margin: 0;">Доходы</h3>
+
+            <div style="display: flex; flex-direction: column; gap: 16px">
+              <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sumMyCostInKzt() }"/>
+
+              @if (sumMyCostSellsInKzt(); as sum) {
+                <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sum, prefix: '+ ' }"/>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div tuiSurface="outline" class="statistic">
+          <div class="statistic__item">
+            <h3 style="margin: 0;">Прибыль</h3>
+
+            <div style="display: flex; flex-direction: column; gap: 16px">
+              <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sumSoldInKzt() }"/>
+
+              @if (sumSellInKzt(); as sum) {
+                <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sum, prefix: '+ ' }"/>
+              }
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    </ng-template>
+  </tui-expand>
 
 
   <tui-scrollbar style="flex-grow: 1">
@@ -106,3 +133,16 @@
     </tui-loader>
   </div>
 </div>
+
+<ng-template #chipList let-kzt let-prefix="prefix">
+  <div style="display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; gap: 16px; justify-content: space-between">
+      <tui-chip size="s" appearance="secondary">
+        {{ prefix }}{{ (kzt / kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} RUB
+      </tui-chip>
+      <tui-chip size="s" appearance="primary">
+        {{ prefix }}{{ kzt | tuiFormatNumber: { precision: 0 } | async }} KZT
+      </tui-chip>
+    </div>
+  </div>
+</ng-template>
