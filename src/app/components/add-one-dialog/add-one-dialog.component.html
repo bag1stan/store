@@ -37,23 +37,54 @@
     />
   </tui-textfield>
 
-  <tui-textfield iconStart="russian-ruble">
-    <label tuiLabel>Цена конкурента</label>
-    <input
-      placeholder="Введи цифру в рублях"
-      tuiInputNumber
-      formControlName="competitors_price"
-    />
-  </tui-textfield>
+  <div style="display: flex; width: 100%; justify-content: space-between; gap: 16px">
+    <tui-textfield
+      iconStart="russian-ruble"
+      style="width: 100%">
+      <label tuiLabel>Конкурент</label>
+      <input
+        placeholder="Введи цифру в рублях"
+        tuiInputNumber
+        formControlName="competitors_price"
+        (input)="onRubCompetitorsInput()"
+      />
+    </tui-textfield>
 
-  <tui-textfield [iconStart]="kztSvgIcon">
-    <label tuiLabel>Моя цена</label>
-    <input
-      placeholder="Введи цифру в тенге"
-      tuiInputNumber
-      formControlName="my_cost"
-    />
-  </tui-textfield>
+    <tui-textfield
+      [iconStart]="kztSvgIcon"
+      style="width: 100%">
+      <label tuiLabel>Конкурент</label>
+      <input
+        tuiInputNumber
+        [formControl]="competitorsKztControl"
+        (input)="onKztCompetitorsInput()"
+      />
+    </tui-textfield>
+  </div>
+
+  <div style="display: flex; width: 100%; justify-content: space-between; gap: 16px">
+    <tui-textfield
+      iconStart="russian-ruble"
+      style="width: 100%">
+      <label tuiLabel>Моя цена</label>
+      <input
+        tuiInputNumber
+        [formControl]="myCostRubControl"
+        (input)="onRubMyCostInput()"
+      />
+    </tui-textfield>
+
+    <tui-textfield
+      [iconStart]="kztSvgIcon"
+      style="width: 100%">
+      <label tuiLabel>Моя цена</label>
+      <input
+        tuiInputNumber
+        formControlName="my_cost"
+        (input)="onKztMyCostInput()"
+      />
+    </tui-textfield>
+  </div>
 
   <button
     size="m"
