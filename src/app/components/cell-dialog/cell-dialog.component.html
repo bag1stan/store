@@ -1,14 +1,4 @@
-<div class="cell-dialog">
-  <button
-    size="m"
-    tuiButton
-    type="button"
-    (click)="expanded.set(!expanded())"
-  >
-    {{ expanded() ? 'Скрыть' : 'Показать' }} статистику
-  </button>
-
-
+<div class="cell-dialog" [class.cell-dialog_with-statistic]="expanded()">
   <tui-expand [expanded]="expanded()">
     <ng-template tuiExpandContent>
       <div style="display: flex; flex-direction: column; gap: 16px;">
@@ -70,7 +60,6 @@
     </ng-template>
   </tui-expand>
 
-
   <tui-scrollbar style="flex-grow: 1">
     <section class="sold-list">
       @for(soldGroup of form.controls; track soldGroup) {
@@ -118,19 +107,32 @@
       />
     </tui-select>
 
-    <tui-loader style="width: 100%" size="m" [overlay]="true" [showLoader]="isLoading()">
+
+    <div style="display: flex; gap: 16px">
       <button
-        style="width: 100%"
         size="m"
-        tuiButton
-        appearance="primary"
-        type="submit"
-        [disabled]="isLoading() || !form.length"
-        (click)="onSellButtonClick()"
-      >
-        Продать
+        tuiIconButton
+        type="button"
+        iconStart="chart-no-axes-combined"
+        [appearance]="expanded() ? 'secondary-destructive' : 'secondary'"
+        (click)="expanded.set(!expanded())"
+      >Статистика
       </button>
-    </tui-loader>
+
+      <tui-loader style="width: 100%" size="m" [overlay]="true" [showLoader]="isLoading()">
+        <button
+          style="width: 100%"
+          size="m"
+          tuiButton
+          appearance="primary"
+          type="submit"
+          [disabled]="isLoading() || !form.length"
+          (click)="onSellButtonClick()"
+        >
+          Продать
+        </button>
+      </tui-loader>
+    </div>
   </div>
 </div>
 

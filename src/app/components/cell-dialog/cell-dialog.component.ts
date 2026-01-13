@@ -87,6 +87,7 @@ export class CellDialogComponent {
 
   readonly items =  computed(() => this.stateService.state());
   readonly isLoading = signal(false);
+  readonly expanded = signal(true);
 
   readonly addedSellIds = signal<number[]>([]);
 
@@ -178,8 +179,6 @@ export class CellDialogComponent {
       return acc + (this.computeResult(sell) * sell.sold)
     }, 0)
   })
-
-  expanded = signal(false);
 
   constructor() {
     this.cellItemControl.valueChanges.pipe(

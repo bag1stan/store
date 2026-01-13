@@ -7,6 +7,7 @@ import {
   TuiLabel,
   TuiTextfieldComponent,
   TuiTextfieldDirective,
+  TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
 import { TuiInputNumber } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
@@ -26,6 +27,7 @@ import { StateService } from '../../services/state.service';
     TuiButton,
     TuiInputYearModule,
     TuiSelectModule,
+    TuiTextfieldOptionsDirective,
 
   ],
   templateUrl: './add-one-dialog.component.html',

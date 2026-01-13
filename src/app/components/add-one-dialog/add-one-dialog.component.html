@@ -1,5 +1,5 @@
 <form [formGroup]="form" class="add-one">
-  <tui-textfield>
+  <tui-textfield [tuiTextfieldCleaner]="false">
     <label tuiLabel>Название</label>
     <input
       placeholder="Введи название"
@@ -8,7 +8,7 @@
     />
   </tui-textfield>
 
-  <tui-textfield>
+  <tui-textfield [tuiTextfieldCleaner]="false">
     <label tuiLabel>В наличии</label>
     <input
       placeholder="Количество шт."
@@ -18,7 +18,7 @@
   </tui-textfield>
 
   @if (isEditMode) {
-    <tui-textfield>
+    <tui-textfield [tuiTextfieldCleaner]="false">
       <label tuiLabel>Продано</label>
       <input
         placeholder="Количество шт."
@@ -28,7 +28,7 @@
     </tui-textfield>
   }
 
-  <tui-textfield iconStart="japanese-yen">
+  <tui-textfield [tuiTextfieldCleaner]="false" iconStart="japanese-yen">
     <label tuiLabel>Себестоимость</label>
     <input
       placeholder="Введи цифру в юанях"
@@ -39,11 +39,11 @@
 
   <div style="display: flex; width: 100%; justify-content: space-between; gap: 16px">
     <tui-textfield
+      [tuiTextfieldCleaner]="false"
       iconStart="russian-ruble"
       style="width: 100%">
       <label tuiLabel>Конкурент</label>
       <input
-        placeholder="Введи цифру в рублях"
         tuiInputNumber
         formControlName="competitors_price"
         (input)="onRubCompetitorsInput()"
@@ -51,6 +51,7 @@
     </tui-textfield>
 
     <tui-textfield
+      [tuiTextfieldCleaner]="false"
       [iconStart]="kztSvgIcon"
       style="width: 100%">
       <label tuiLabel>Конкурент</label>
@@ -64,6 +65,7 @@
 
   <div style="display: flex; width: 100%; justify-content: space-between; gap: 16px">
     <tui-textfield
+      [tuiTextfieldCleaner]="false"
       iconStart="russian-ruble"
       style="width: 100%">
       <label tuiLabel>Моя цена</label>
@@ -75,6 +77,7 @@
     </tui-textfield>
 
     <tui-textfield
+      [tuiTextfieldCleaner]="false"
       [iconStart]="kztSvgIcon"
       style="width: 100%">
       <label tuiLabel>Моя цена</label>

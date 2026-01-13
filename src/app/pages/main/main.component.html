@@ -1,16 +1,18 @@
 <div class="main">
   <tui-scrollbar>
-    <tui-loader size="xl" [overlay]="true" [showLoader]="isLoading()">
+    <tui-loader size="xl" [overlay]="true" [showLoader]="isProductsLoading()">
       <table tuiTable class="table">
         <thead>
         <tr>
-          <th tuiTh [sticky]="true" style="vertical-align: middle; text-align: center;">
-            <button
-              tuiIconButton
-              size="l"
-              appearance="flat"
-              iconStart="frame"
-              (click)="onFullScreenModeChange()">Change screen mode</button>
+          <th tuiTh [sticky]="true" style="vertical-align: middle; text-align: center; z-index: 100">
+            <tui-loader size="l" [showLoader]="isOperationsLoading()">
+              <button
+                tuiIconButton
+                size="l"
+                appearance="flat"
+                iconStart="frame"
+                (click)="onFullScreenModeChange()">Change screen mode</button>
+            </tui-loader>
           </th>
           <th [sticky]="true" tuiTh *ngFor="let item of store() | sortById" style="text-align: center">
             <div>{{ item.title }}</div>
@@ -128,7 +130,7 @@
         <button
           tuiIconButton
           size="l"
-          appearance="primary"
+          appearance="glass"
           [iconStart]="isDarkTheme() ? 'moon' : 'sun'"
           (click)="onThemeChange()">Change theme</button>
 

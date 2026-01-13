@@ -61,7 +61,8 @@ export class MainComponent {
 
   readonly store = this.state.state;
 
-  readonly isLoading = signal(false);
+  readonly isProductsLoading = signal(false);
+  readonly isOperationsLoading = signal(false);
 
   readonly kztCurrency = this.state.kztCurrency;
   readonly uanCurrency = this.state.uanCurrency;
@@ -107,20 +108,20 @@ export class MainComponent {
   }
 
   private loadData(): void {
-    this.isLoading.set(true);
+    this.isProductsLoading.set(true);
 
     this.api.getAll().pipe(
       tap((items) => this.store.set(items)),
-      tap(() => this.isLoading.set(false)),
+      tap(() => this.isProductsLoading.set(false)),
     ).subscribe()
   }
 
   addOne() {
     this.dialogService.openAddDialog().pipe(
-      tap(() => this.isLoading.set(true)),
+      tap(() => this.isOperationsLoading.set(true)),
       mergeMap((product) => this.api.addOne(product)),
       tap((product) => {
-        this.isLoading.set(false)
+        this.isOperationsLoading.set(false)
         this.state.addProduct(product);
       })
     )
@@ -130,10 +131,10 @@ export class MainComponent {
 
   editOne(product: Product) {
     this.dialogService.openEditDialog(product).pipe(
-      tap(() => this.isLoading.set(true)),
+      tap(() => this.isOperationsLoading.set(true)),
       mergeMap((product) => this.api.updateOne(product)),
       tap((product) => {
-        this.isLoading.set(false)
+        this.isOperationsLoading.set(false)
         this.state.updateProduct(product);
       })
     )
@@ -142,10 +143,10 @@ export class MainComponent {
 
   deleteOne({ id, title }: Product) {
     this.dialogService.openDeleteDialog(title).pipe(
-      tap(() => this.isLoading.set(true)),
+      tap(() => this.isOperationsLoading.set(true)),
       delayWhen(() => this.api.deleteOne(id)),
       tap(() => {
-        this.isLoading.set(false)
+        this.isOperationsLoading.set(false)
         this.state.deleteProduct(id);
       })
     ).subscribe()
