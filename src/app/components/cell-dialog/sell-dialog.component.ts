@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   TuiAlertService,
   TuiButton,
@@ -25,7 +25,7 @@ import {
 import { injectContext } from '@taiga-ui/polymorpheus';
 import { Product } from '../../interfaces/product.interface';
 import { StateService } from '../../services/state.service';
-import { TuiComboBoxModule, TuiInputModule, TuiSelectModule } from '@taiga-ui/legacy';
+import { TuiSelectModule } from '@taiga-ui/legacy';
 import { catchError, EMPTY, filter, forkJoin, tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -37,41 +37,38 @@ import { FilterByAddedSellPipe } from '../../pipes/filter-by-added-sell.pipe';
 
 @Component({
   imports: [
+    AsyncPipe,
+    NgTemplateOutlet,
     ReactiveFormsModule,
-    TuiButton,
-    TuiDataListWrapperComponent,
-    TuiFilterByInputPipe,
-    FormsModule,
-    TuiInputModule,
-    TuiDataList,
-    TuiComboBoxModule,
+    TuiFade,
     TuiChip,
+    TuiButton,
+    TuiLoader,
+    TuiSurface,
+    TuiDataList,
     TuiScrollbar,
     TuiInputNumber,
-    TuiTextfieldComponent,
-    TuiTextfieldOptionsDirective,
-    TuiFade,
     TuiSelectModule,
-    SortByIdPipe,
-    TuiLoader,
-    AsyncPipe,
+    TuiExpandContent,
+    TuiExpandComponent,
+    TuiDataListWrapperComponent,
+    TuiTextfieldComponent,
     TuiFormatNumberPipe,
-    TuiSurface,
+    TuiFilterByInputPipe,
+    TuiTextfieldOptionsDirective,
+    SortByIdPipe,
     FilterWithAmountPipe,
     FilterByAddedSellPipe,
-    NgTemplateOutlet,
-    TuiExpandComponent,
-    TuiExpandContent,
   ],
   providers: [
     tuiItemsHandlersProvider({
       stringify: ((x: Product) => x.title),
     }),
   ],
-  templateUrl: './cell-dialog.component.html',
-  styleUrl: './cell-dialog.component.scss'
+  templateUrl: './sell-dialog.component.html',
+  styleUrl: './sell-dialog.component.scss'
 })
-export class CellDialogComponent {
+export class SellDialogComponent {
   private readonly fb =  inject(FormBuilder);
   private readonly alertService = inject(TuiAlertService);
   private readonly context = injectContext<TuiDialogContext<unknown, void>>();
@@ -82,7 +79,6 @@ export class CellDialogComponent {
   readonly kztCurrency = this.stateService.kztCurrency;
   readonly uanCurrency = this.stateService.uanCurrency;
   readonly percent = this.stateService.percent;
-  readonly products = this.stateService.state;
   readonly productEntities = this.stateService.stateEntities;
 
   readonly items =  computed(() => this.stateService.state());
@@ -93,10 +89,6 @@ export class CellDialogComponent {
 
   readonly form = this.fb.array<FormGroup>([]);
   readonly cellItemControl = this.fb.control<Product | null>(null);
-
-  readonly soldAmount = computed(() => {
-    return this.products().reduce((acc, product) => acc + product.sold, 0)
-  })
 
   readonly sumCostInKzt = computed(() => {
     const products = this.stateService.state();
@@ -153,16 +145,6 @@ export class CellDialogComponent {
       return acc + (sell.my_cost * sell.sold)
     }, 0)
   });
-
-  readonly sellAmount = computed(() => {
-    const changes = this.formChanges();
-
-    if (!changes?.length) {
-      return null;
-    }
-
-    return changes.reduce((acc, product) => acc + product.sold, 0)
-  })
 
   readonly sumSellInKzt = computed(() => {
     const changes = this.formChanges();

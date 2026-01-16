@@ -4,24 +4,6 @@
       <div style="display: flex; flex-direction: column; gap: 16px;">
         <div tuiSurface="outline" class="statistic">
           <div class="statistic__item">
-            <h3 style="margin: 0;">Продано</h3>
-
-            <div style="display:flex; gap: 16px;">
-              <tui-chip tuiFade size="s" appearance="secondary" >
-                {{ soldAmount() }} шт.
-              </tui-chip>
-
-              @if (sellAmount(); as amount) {
-                <tui-chip tuiFade size="s" appearance="primary" >
-                  + {{ amount }} шт.
-                </tui-chip>
-              }
-            </div>
-          </div>
-        </div>
-
-        <div tuiSurface="outline" class="statistic">
-          <div class="statistic__item">
             <h3 style="margin: 0;">Расходы</h3>
 
             <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sumCostInKzt() }"/>

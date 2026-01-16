@@ -5,7 +5,7 @@ import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 import { AddOneDialogComponent } from '../components/add-one-dialog/add-one-dialog.component';
 import { filter } from 'rxjs';
 import { UiConfirmationDialogComponent } from '../components/confirm-dialog/ui-confirmation-dialog.component';
-import { CellDialogComponent } from '../components/cell-dialog/cell-dialog.component';
+import { SellDialogComponent } from '../components/cell-dialog/sell-dialog.component';
 
 @Injectable()
 export class DialogService {
@@ -44,7 +44,7 @@ export class DialogService {
 
   openCellDialog() {
     return this.dialogs
-      .open(new PolymorpheusComponent(CellDialogComponent, this.injector), {
+      .open(new PolymorpheusComponent(SellDialogComponent, this.injector), {
         size: 'page',
         label: 'Склад'
       }).pipe(filter(Boolean))
