@@ -8,6 +8,4 @@ import { TuiRoot } from '@taiga-ui/core';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  title = 'olikeek';
-}
+export class AppComponent {}
