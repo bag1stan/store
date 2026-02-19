@@ -26,7 +26,7 @@ import { injectContext } from '@taiga-ui/polymorpheus';
 import { Product } from '../../interfaces/product.interface';
 import { StateService } from '../../services/state.service';
 import { TuiSelectModule } from '@taiga-ui/legacy';
-import { catchError, EMPTY, filter, forkJoin, tap } from 'rxjs';
+import { catchError, EMPTY, filter, tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
@@ -211,22 +211,21 @@ export class SellDialogComponent {
     const sells: Product[] = this.form.value;
     const productEntities = this.stateService.stateEntities();
 
-    const requests = sells.map(
+    const updatedSells: Product[] = sells.map(
       ({ id, sold}) => {
         const productState = productEntities[id];
 
-        return this.api.updateOne({
+        return {
           ...productState,
           amount: productState.amount - sold,
           sold: productState.sold + sold
-        });
+        };
       }
     )
 
-
-    forkJoin(requests).pipe(
-      tap((updatedProducts) => {
-        const updatedProductEntities = updatedProducts.reduce(
+    this.api.updateBatch(updatedSells).pipe(
+      tap(({ updates }) => {
+        const updatedProductEntities = updates.reduce(
           (acc, product) => ({...acc, [product.id]: product}),
           {} as Record<string, Product>);
         const updatedProductIds = Object.keys(updatedProductEntities);
@@ -244,13 +243,14 @@ export class SellDialogComponent {
       }),
       catchError(() => {
         this.showAlert('Возникла ошибка, попробуй снова');
+        this.isLoading.set(false);
 
         return EMPTY
       })
     ).subscribe()
   }
 
-  showAlert(msg: string): void {
+  private showAlert(msg: string): void {
     this.alertService
       .open(msg, {
         icon: '@tui.circle-x',

@@ -11,6 +11,10 @@ export class ApiService {
     return this.http.get<Product[]>(`${this.baseUrl}/product_price`);
   }
 
+  updateBatch(updates: Product[]) {
+    return this.http.post<{ updates: Product[] }>(`${this.baseUrl}/product_prices/bulk_update`, { updates });
+  }
+
   addOne(product: Product) {
     return this.http.post<Product>(`${this.baseUrl}/product_price`, product);
   }

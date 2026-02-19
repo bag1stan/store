@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import {
+  TuiAlertService,
   TuiButton,
   TuiFormatNumberPipe,
   TuiLabel,
@@ -10,7 +11,7 @@ import {
   TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
 import { ApiService } from '../../services/api.service';
-import { delayWhen, mergeMap, tap } from 'rxjs';
+import { catchError, delayWhen, EMPTY, mergeMap, tap } from 'rxjs';
 import { Product } from '../../interfaces/product.interface';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogService } from '../../services/dialog.service';
@@ -52,6 +53,7 @@ import { StateService } from '../../services/state.service';
   styleUrl: './main.component.scss'
 })
 export class MainComponent {
+  private readonly alertService = inject(TuiAlertService);
   private readonly api = inject(ApiService);
   private readonly dialogService = inject(DialogService);
   private readonly state = inject(StateService);
@@ -113,6 +115,12 @@ export class MainComponent {
     this.api.getAll().pipe(
       tap((items) => this.store.set(items)),
       tap(() => this.isProductsLoading.set(false)),
+      catchError(() => {
+        this.showAlert('Возникла ошибка, попробуй снова');
+        this.isProductsLoading.set(false)
+
+        return EMPTY
+      })
     ).subscribe()
   }
 
@@ -123,6 +131,12 @@ export class MainComponent {
       tap((product) => {
         this.isOperationsLoading.set(false)
         this.state.addProduct(product);
+      }),
+      catchError(() => {
+        this.showAlert('Возникла ошибка, попробуй снова');
+        this.isOperationsLoading.set(false)
+
+        return EMPTY
       })
     )
       .subscribe();
@@ -136,6 +150,12 @@ export class MainComponent {
       tap((product) => {
         this.isOperationsLoading.set(false)
         this.state.updateProduct(product);
+      }),
+      catchError(() => {
+        this.showAlert('Возникла ошибка, попробуй снова');
+        this.isOperationsLoading.set(false)
+
+        return EMPTY
       })
     )
       .subscribe();
@@ -148,7 +168,22 @@ export class MainComponent {
       tap(() => {
         this.isOperationsLoading.set(false)
         this.state.deleteProduct(id);
+      }),
+      catchError(() => {
+        this.showAlert('Возникла ошибка, попробуй снова');
+        this.isOperationsLoading.set(false)
+
+        return EMPTY
       })
     ).subscribe()
+  }
+
+  private showAlert(msg: string): void {
+    this.alertService
+      .open(msg, {
+        icon: '@tui.circle-x',
+        appearance: 'negative',
+      })
+      .subscribe();
   }
 }
