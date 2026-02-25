@@ -105,15 +105,11 @@
               formControlName="sold" />
           </tui-textfield>
 
-          <button
-            size="m"
-            tuiIconButton
+          <app-icon-button
+            size="l"
+            icon="x"
             appearance="outline-destructive"
-            type="button"
-            iconStart="x"
-            (click)="deleteOne($index)">
-            Удалить продажу
-          </button>
+            (clicked)="deleteOne($index)" />
         </form>
       }
     </section>
@@ -139,15 +135,10 @@
     </tui-select>
 
     <div style="display: flex; gap: 16px">
-      <button
-        size="m"
-        tuiIconButton
-        type="button"
-        iconStart="chart-no-axes-combined"
+      <app-icon-button
+        icon="chart-no-axes-combined"
         [appearance]="expanded() ? 'secondary-destructive' : 'secondary'"
-        (click)="expanded.set(!expanded())">
-        Статистика
-      </button>
+        (clicked)="expanded.set(!expanded())" />
 
       <tui-loader
         style="width: 100%"

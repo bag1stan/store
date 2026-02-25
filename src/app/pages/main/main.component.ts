@@ -1,10 +1,4 @@
-import {
-  NgForOf,
-  NgStyle,
-  NgSwitch,
-  NgSwitchCase,
-  NgSwitchDefault,
-} from '@angular/common';
+import { NgForOf, NgStyle, NgSwitch, NgSwitchCase } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -15,7 +9,6 @@ import {
 } from '@taiga-ui/addon-table';
 import {
   TuiAlertService,
-  TuiButton,
   TuiLabel,
   TuiLoader,
   TuiNumberFormat,
@@ -32,12 +25,12 @@ import { ApiService } from '../../services/api.service';
 import { DialogService } from '../../services/dialog.service';
 import { StateService } from '../../services/state.service';
 import { CostChipComponent } from '../../shared/components/cost-chip/cost-chip.component';
+import { IconButtonComponent } from '../../shared/components/icon-button/icon-button.component';
 import { CurrencyCode } from '../../shared/enums/currency-code.enum';
 
 @Component({
   selector: 'app-main',
   imports: [
-    TuiButton,
     TuiLoader,
     ReactiveFormsModule,
     TuiLabel,
@@ -48,7 +41,6 @@ import { CurrencyCode } from '../../shared/enums/currency-code.enum';
     NgSwitchCase,
     NgSwitch,
     NgForOf,
-    NgSwitchDefault,
     TuiTableTh,
     TuiTableTd,
     TuiTableTbody,
@@ -59,6 +51,7 @@ import { CurrencyCode } from '../../shared/enums/currency-code.enum';
     TuiTextfieldOptionsDirective,
     TuiNumberFormat,
     CostChipComponent,
+    IconButtonComponent,
   ],
   providers: [DialogService],
   templateUrl: './main.component.html',

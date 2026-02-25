@@ -39,6 +39,7 @@ import { SortByIdPipe } from '../../pipes/sort-by-id.pipe';
 import { ApiService } from '../../services/api.service';
 import { StateService } from '../../services/state.service';
 import { CostChipComponent } from '../../shared/components/cost-chip/cost-chip.component';
+import { IconButtonComponent } from '../../shared/components/icon-button/icon-button.component';
 import { CurrencyCode } from '../../shared/enums/currency-code.enum';
 
 @Component({
@@ -64,6 +65,7 @@ import { CurrencyCode } from '../../shared/enums/currency-code.enum';
     FilterWithAmountPipe,
     FilterByAddedSellPipe,
     CostChipComponent,
+    IconButtonComponent,
   ],
   providers: [
     tuiItemsHandlersProvider({

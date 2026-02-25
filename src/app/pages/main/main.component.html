@@ -9,14 +9,11 @@
               style="vertical-align: middle; text-align: center; z-index: 100"
               [sticky]="true">
               <tui-loader size="l" [showLoader]="isOperationsLoading()">
-                <button
-                  tuiIconButton
+                <app-icon-button
                   size="l"
+                  icon="frame"
                   appearance="flat"
-                  iconStart="frame"
-                  (click)="onFullScreenModeChange()">
-                  Change screen mode
-                </button>
+                  (clicked)="onFullScreenModeChange()" />
               </tui-loader>
             </th>
             <th
@@ -120,27 +117,18 @@
                   @if (!isFullScreen()) {
                     <ng-container *ngSwitchCase="'operations'">
                       <div>
-                        <button
-                          tuiIconButton
-                          size="m"
+                        <app-icon-button
                           appearance="flat"
-                          iconStart="pencil"
-                          (click)="editOne(item)">
-                          Ред.
-                        </button>
-                        <button
-                          tuiIconButton
-                          size="m"
+                          icon="pencil"
+                          (clicked)="editOne(item)" />
+
+                        <app-icon-button
                           appearance="flat-destructive"
-                          iconStart="trash"
-                          (click)="deleteOne(item)">
-                          Удал.
-                        </button>
+                          icon="trash"
+                          (clicked)="deleteOne(item)" />
                       </div>
                     </ng-container>
                   }
-
-                  <ng-container *ngSwitchDefault> — </ng-container>
                 </ng-container>
               </td>
             }
@@ -153,14 +141,11 @@
   @if (!isFullScreen()) {
     <section class="main__currency">
       <div style="display: flex; gap: 8px; width: 100%; align-items: center">
-        <button
-          tuiIconButton
+        <app-icon-button
           size="l"
           appearance="glass"
-          [iconStart]="isDarkTheme() ? 'moon' : 'sun'"
-          (click)="onThemeChange()">
-          Change theme
-        </button>
+          [icon]="isDarkTheme() ? 'moon' : 'sun'"
+          (clicked)="onThemeChange()" />
 
         <tui-textfield
           class="main__currency-item"
@@ -192,25 +177,11 @@
             [(ngModel)]="percent" />
         </tui-textfield>
 
-        <button
+        <app-icon-button size="l" icon="plus" (clicked)="addOne()" />
+        <app-icon-button
           size="l"
-          tuiIconButton
-          appearance="primary"
-          type="button"
-          iconStart="plus"
-          (click)="addOne()">
-          Добавить товар
-        </button>
-
-        <button
-          size="l"
-          tuiIconButton
-          iconStart="trending-up"
-          appearance="primary"
-          type="button"
-          (click)="onCellButtonClick()">
-          Продать
-        </button>
+          icon="trending-up"
+          (clicked)="onCellButtonClick()" />
       </div>
     </section>
   }
