@@ -30,7 +30,7 @@ import {
 } from '@taiga-ui/kit';
 import { TuiSelectModule } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
-import { catchError, EMPTY, filter, tap } from 'rxjs';
+import { filter, finalize, tap } from 'rxjs';
 
 import { Product } from '../../interfaces/product.interface';
 import { FilterByAddedSellPipe } from '../../pipes/filter-by-added-sell.pipe';
@@ -236,15 +236,9 @@ export class SellDialogComponent {
             )
           );
 
-          this.isLoading.set(false);
           this.context.completeWith(null);
         }),
-        catchError(() => {
-          this.showAlert('Возникла ошибка, попробуй снова');
-          this.isLoading.set(false);
-
-          return EMPTY;
-        })
+        finalize(() => this.isLoading.set(false))
       )
       .subscribe();
   }

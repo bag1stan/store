@@ -6,25 +6,27 @@ import { Product } from '../interfaces/product.interface';
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'https://x8ki-letl-twmt.n7.xano.io/api:V5WjvOLu';
 
   getAll() {
-    return this.http.get<Product[]>(`${this.baseUrl}/product_price`);
+    return this.http.get<Product[]>(`/api/product_price`);
   }
 
   updateBatch(updates: Product[]) {
-    return this.http.post<{ updates: Product[] }>(`${this.baseUrl}/product_prices/bulk_update`, { updates });
+    return this.http.post<{ updates: Product[] }>(
+      `/api/product_prices/bulk_update`,
+      { updates }
+    );
   }
 
   addOne(product: Product) {
-    return this.http.post<Product>(`${this.baseUrl}/product_price`, product);
+    return this.http.post<Product>(`/api/product_price`, product);
   }
 
   updateOne(product: Pick<Product, 'id'> & Partial<Omit<Product, 'id'>>) {
-    return this.http.put<Product>(`${this.baseUrl}/product_price/${product.id}`, product);
+    return this.http.put<Product>(`/api/product_price/${product.id}`, product);
   }
 
   deleteOne(id: Product['id']) {
-    return this.http.delete<void>(`${this.baseUrl}/product_price/${id}`);
+    return this.http.delete<void>(`/api/product_price/${id}`);
   }
 }

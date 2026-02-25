@@ -8,7 +8,6 @@ import {
   TuiTableTh,
 } from '@taiga-ui/addon-table';
 import {
-  TuiAlertService,
   TuiLabel,
   TuiLoader,
   TuiNumberFormat,
@@ -17,7 +16,7 @@ import {
   TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
 import { TuiChip, TuiInputNumber } from '@taiga-ui/kit';
-import { catchError, delayWhen, EMPTY, mergeMap, tap } from 'rxjs';
+import { delayWhen, finalize, mergeMap, tap } from 'rxjs';
 
 import { Product } from '../../interfaces/product.interface';
 import { SortByIdPipe } from '../../pipes/sort-by-id.pipe';
@@ -58,7 +57,6 @@ import { CurrencyCode } from '../../shared/enums/currency-code.enum';
   styleUrl: './main.component.scss',
 })
 export class MainComponent {
-  private readonly alertService = inject(TuiAlertService);
   private readonly api = inject(ApiService);
   private readonly dialogService = inject(DialogService);
   private readonly state = inject(StateService);
@@ -114,23 +112,8 @@ export class MainComponent {
       .getAll()
       .pipe(
         tap((items) => this.store.set(items)),
-        tap(() => this.isProductsLoading.set(false)),
-        catchError(() => {
-          this.showAlert('Возникла ошибка, попробуй снова');
-          this.isProductsLoading.set(false);
-
-          return EMPTY;
-        })
+        finalize(() => this.isProductsLoading.set(false))
       )
-      .subscribe();
-  }
-
-  private showAlert(msg: string): void {
-    this.alertService
-      .open(msg, {
-        icon: '@tui.circle-x',
-        appearance: 'negative',
-      })
       .subscribe();
   }
 
@@ -153,16 +136,8 @@ export class MainComponent {
       .pipe(
         tap(() => this.isOperationsLoading.set(true)),
         mergeMap((product) => this.api.addOne(product)),
-        tap((product) => {
-          this.isOperationsLoading.set(false);
-          this.state.addProduct(product);
-        }),
-        catchError(() => {
-          this.showAlert('Возникла ошибка, попробуй снова');
-          this.isOperationsLoading.set(false);
-
-          return EMPTY;
-        })
+        tap((product) => this.state.addProduct(product)),
+        finalize(() => this.isOperationsLoading.set(false))
       )
       .subscribe();
   }
@@ -173,16 +148,8 @@ export class MainComponent {
       .pipe(
         tap(() => this.isOperationsLoading.set(true)),
         mergeMap((product) => this.api.updateOne(product)),
-        tap((product) => {
-          this.isOperationsLoading.set(false);
-          this.state.updateProduct(product);
-        }),
-        catchError(() => {
-          this.showAlert('Возникла ошибка, попробуй снова');
-          this.isOperationsLoading.set(false);
-
-          return EMPTY;
-        })
+        tap((product) => this.state.updateProduct(product)),
+        finalize(() => this.isOperationsLoading.set(false))
       )
       .subscribe();
   }
@@ -193,16 +160,8 @@ export class MainComponent {
       .pipe(
         tap(() => this.isOperationsLoading.set(true)),
         delayWhen(() => this.api.deleteOne(id)),
-        tap(() => {
-          this.isOperationsLoading.set(false);
-          this.state.deleteProduct(id);
-        }),
-        catchError(() => {
-          this.showAlert('Возникла ошибка, попробуй снова');
-          this.isOperationsLoading.set(false);
-
-          return EMPTY;
-        })
+        tap(() => this.state.deleteProduct(id)),
+        finalize(() => this.isOperationsLoading.set(false))
       )
       .subscribe();
   }
