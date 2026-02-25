@@ -49,6 +49,14 @@
           <tui-chip tuiFade size="m" appearance="secondary" style="flex: 1 1 auto; display: flex; justify-content: space-between">
             <span>{{soldGroup.controls['title'].value}}</span>
             <span>{{soldGroup.controls['amount'].value}} шт.</span>
+
+            <div style="display: flex; gap: 16px">
+              @let myCost = soldGroup.controls['myCost'].value;
+              @let myCostSold = myCost * soldGroup.controls['sold'].value;
+
+              <app-cost-chip appearance="secondary" [currency]="currencies.KZT" [value]="myCostSold"/>
+              <app-cost-chip appearance="primary" [currency]="currencies.RUB" [value]="myCostSold / kztCurrency()"/>
+            </div>
           </tui-chip>
 
           <tui-textfield style="min-width: 60px; max-width: fit-content; max-height: var(--tui-height-m);" [tuiTextfieldCleaner]="false">
@@ -121,12 +129,8 @@
 <ng-template #chipList let-kzt let-prefix="prefix">
   <div style="display: flex; flex-direction: column; gap: 16px">
     <div style="display: flex; gap: 16px; justify-content: space-between">
-      <tui-chip size="s" appearance="secondary">
-        {{ prefix }}{{ (kzt / kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} RUB
-      </tui-chip>
-      <tui-chip size="s" appearance="primary">
-        {{ prefix }}{{ kzt | tuiFormatNumber: { precision: 0 } | async }} KZT
-      </tui-chip>
+      <app-cost-chip appearance="secondary" [prefix]="prefix" [currency]="currencies.KZT" [value]="kzt / kztCurrency()"/>
+      <app-cost-chip appearance="primary" [prefix]="prefix" [currency]="currencies.RUB" [value]="kzt"/>
     </div>
   </div>
 </ng-template>

@@ -1,0 +1,3 @@
+<tui-chip [size]="size()" [appearance]="appearance()">
+  {{ prefix() }} {{ value() | tuiFormatNumber: { precision: 0 } | async }} {{ currency() }}
+</tui-chip>

@@ -2,7 +2,6 @@ import { Component, computed, inject, signal } from '@angular/core';
 import {
   TuiAlertService,
   TuiButton,
-  TuiFormatNumberPipe,
   TuiLabel,
   TuiLoader,
   TuiNumberFormat,
@@ -16,10 +15,12 @@ import { Product } from '../../interfaces/product.interface';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogService } from '../../services/dialog.service';
 import { TuiChip, TuiInputNumber } from '@taiga-ui/kit';
-import { AsyncPipe, NgForOf, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
+import { NgForOf, NgStyle, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { TuiTableDirective, TuiTableTbody, TuiTableTd, TuiTableTh } from '@taiga-ui/addon-table';
 import { SortByIdPipe } from '../../pipes/sort-by-id.pipe';
 import { StateService } from '../../services/state.service';
+import { CostChip } from '../../shared/components/cost-chip/cost-chip';
+import { CurrencyCode } from '../../shared/enums/currency-code.enum';
 
 @Component({
   selector: 'app-main',
@@ -32,8 +33,6 @@ import { StateService } from '../../services/state.service';
     FormsModule,
     TuiScrollbar,
     TuiChip,
-    TuiFormatNumberPipe,
-    AsyncPipe,
     NgSwitchCase,
     NgSwitch,
     NgForOf,
@@ -47,6 +46,7 @@ import { StateService } from '../../services/state.service';
     NgStyle,
     TuiTextfieldOptionsDirective,
     TuiNumberFormat,
+    CostChip,
   ],
   providers: [DialogService],
   templateUrl: './main.component.html',
@@ -69,6 +69,8 @@ export class MainComponent {
   readonly kztCurrency = this.state.kztCurrency;
   readonly uanCurrency = this.state.uanCurrency;
   readonly percent = this.state.percent;
+
+  readonly currencies = CurrencyCode;
 
   constructor() {
     this.loadData();

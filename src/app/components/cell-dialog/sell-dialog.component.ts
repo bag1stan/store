@@ -7,7 +7,6 @@ import {
   TuiDialogContext,
   TuiExpandComponent,
   TuiExpandContent,
-  TuiFormatNumberPipe,
   TuiLoader,
   TuiScrollbar,
   TuiSurface,
@@ -29,15 +28,16 @@ import { TuiSelectModule } from '@taiga-ui/legacy';
 import { catchError, EMPTY, filter, tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { SortByIdPipe } from '../../pipes/sort-by-id.pipe';
 import { FilterWithAmountPipe } from '../../pipes/filter-with-amount.pipe';
 import { FilterByAddedSellPipe } from '../../pipes/filter-by-added-sell.pipe';
+import { CostChip } from '../../shared/components/cost-chip/cost-chip';
+import { CurrencyCode } from '../../shared/enums/currency-code.enum';
 
 
 @Component({
   imports: [
-    AsyncPipe,
     NgTemplateOutlet,
     ReactiveFormsModule,
     TuiFade,
@@ -53,12 +53,12 @@ import { FilterByAddedSellPipe } from '../../pipes/filter-by-added-sell.pipe';
     TuiExpandComponent,
     TuiDataListWrapperComponent,
     TuiTextfieldComponent,
-    TuiFormatNumberPipe,
     TuiFilterByInputPipe,
     TuiTextfieldOptionsDirective,
     SortByIdPipe,
     FilterWithAmountPipe,
     FilterByAddedSellPipe,
+    CostChip,
   ],
   providers: [
     tuiItemsHandlersProvider({
@@ -80,6 +80,8 @@ export class SellDialogComponent {
   readonly uanCurrency = this.stateService.uanCurrency;
   readonly percent = this.stateService.percent;
   readonly productEntities = this.stateService.stateEntities;
+
+  readonly currencies = CurrencyCode;
 
   readonly items =  computed(() => this.stateService.state());
   readonly isLoading = signal(false);
@@ -181,7 +183,7 @@ export class SellDialogComponent {
     ).subscribe()
   }
 
-  private addNewGroup({ id, title, amount }: Product): void {
+  private addNewGroup({ id, title, amount, my_cost }: Product): void {
     this.addedSellIds.update(v => [ ...v, id ]);
 
     this.form.push(
@@ -189,6 +191,7 @@ export class SellDialogComponent {
         id,
         title,
         amount,
+        myCost: my_cost,
         sold: this.fb.control(1, [Validators.required, Validators.min(1), Validators.max(amount)]), })
     )
   }

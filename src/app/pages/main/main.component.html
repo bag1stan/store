@@ -31,53 +31,33 @@
                 <!-- raw CNY -->
                 <ng-container *ngSwitchCase="'cost_price'">
                   <div class="table__cell-item">
-                    <tui-chip size="s" appearance="outline">
-                      {{ item.cost_price | tuiFormatNumber | async }} CNY
-                    </tui-chip>
-
-                    <tui-chip size="s" appearance="primary">
-                      {{ computeCostPriceUpd(item) | tuiFormatNumber: { precision: 0 } | async }} KZT
-                    </tui-chip>
-
-                    <tui-chip size="s" appearance="secondary">
-                      {{ (computeCostPriceUpd(item) / kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} RUB
-                    </tui-chip>
+                    <app-cost-chip appearance="outline" [currency]="currencies.CNY" [value]="item.cost_price"/>
+                    <app-cost-chip appearance="primary" [currency]="currencies.KZT" [value]="computeCostPriceUpd(item)"/>
+                    <app-cost-chip appearance="secondary" [currency]="currencies.RUB" [value]="computeCostPriceUpd(item) / kztCurrency()"/>
                   </div>
                 </ng-container>
 
                 <!-- цена конкурента (RUB и KZT) -->
                 <ng-container *ngSwitchCase="'competitors_price'">
                   <div class="table__cell-item">
-                    <tui-chip size="s" appearance="primary">
-                      {{ (item.competitors_price * kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} KZT
-                    </tui-chip>
-                    <tui-chip size="s" appearance="secondary">
-                      {{ item.competitors_price | tuiFormatNumber | async }} RUB
-                    </tui-chip>
+                    <app-cost-chip appearance="primary" [currency]="currencies.KZT" [value]="item.competitors_price * kztCurrency()"/>
+                    <app-cost-chip appearance="secondary" [currency]="currencies.RUB" [value]="item.competitors_price"/>
                   </div>
                 </ng-container>
 
                 <!-- моя цена -->
                 <ng-container *ngSwitchCase="'my_cost'">
                   <div class="table__cell-item">
-                    <tui-chip size="s" appearance="primary">
-                      {{ (item.my_cost) | tuiFormatNumber: { precision: 0 } | async }} KZT
-                    </tui-chip>
-                    <tui-chip size="s" appearance="secondary">
-                      {{ item.my_cost / kztCurrency() | tuiFormatNumber: { precision: 0 } | async }} RUB
-                    </tui-chip>
+                    <app-cost-chip appearance="primary" [currency]="currencies.KZT" [value]="item.my_cost"/>
+                    <app-cost-chip appearance="secondary" [currency]="currencies.RUB" [value]="item.my_cost / kztCurrency()"/>
                   </div>
                 </ng-container>
 
                 <!-- маржа -->
                 <ng-container *ngSwitchCase="'result'">
                   <div class="table__cell-item">
-                    <tui-chip size="s" appearance="primary">
-                      {{ computeResult(item) | tuiFormatNumber: { precision: 0 } | async }} KZT
-                    </tui-chip>
-                    <tui-chip size="s" appearance="secondary">
-                      {{ (computeResult(item) / kztCurrency()) | tuiFormatNumber: { precision: 0 } | async }} RUB
-                    </tui-chip>
+                    <app-cost-chip appearance="primary" [currency]="currencies.KZT" [value]="computeResult(item)"/>
+                    <app-cost-chip appearance="secondary" [currency]="currencies.RUB" [value]="computeResult(item) / kztCurrency()"/>
                   </div>
                 </ng-container>
 
@@ -85,10 +65,10 @@
                 <ng-container *ngSwitchCase="'amount'">
                   <div class="table__cell-item">
                     <tui-chip size="s" [appearance]="item.amount ? 'outline' : 'outline-destructive'">
-                      {{ item.amount | tuiFormatNumber | async }} шт.
+                      {{ item.amount }} шт.
                     </tui-chip>
                     <tui-chip size="s" appearance="secondary">
-                      {{ item.sold | tuiFormatNumber | async }} шт.
+                      {{ item.sold }} шт.
                     </tui-chip>
                   </div>
                 </ng-container>
