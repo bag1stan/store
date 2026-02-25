@@ -10,10 +10,11 @@ import {
   TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
 import { TuiInputNumber } from '@taiga-ui/kit';
+import { TuiInputYearModule, TuiSelectModule } from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
+
 import { kztSvg } from '../../icons/kzt.constant';
 import { Product } from '../../interfaces/product.interface';
-import { TuiInputYearModule, TuiSelectModule } from '@taiga-ui/legacy';
 import { StateService } from '../../services/state.service';
 
 
@@ -117,6 +118,7 @@ export class AddOneDialogComponent {
   addOne() {
     if (this.form.invalid) {
       this.showAlert('Заполни все поля')
+
       return;
     }
 

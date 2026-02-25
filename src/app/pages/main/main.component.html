@@ -3,142 +3,193 @@
     <tui-loader size="xl" [overlay]="true" [showLoader]="isProductsLoading()">
       <table tuiTable class="table">
         <thead>
-        <tr>
-          <th tuiTh [sticky]="true" style="vertical-align: middle; text-align: center; z-index: 100">
-            <tui-loader size="l" [showLoader]="isOperationsLoading()">
-              <button
-                tuiIconButton
-                size="l"
-                appearance="flat"
-                iconStart="frame"
-                (click)="onFullScreenModeChange()">Change screen mode</button>
-            </tui-loader>
-          </th>
-          <th [sticky]="true" tuiTh *ngFor="let item of store() | sortById" style="text-align: center">
-            <div>{{ item.title }}</div>
-          </th>
-        </tr>
+          <tr>
+            <th
+              tuiTh
+              style="vertical-align: middle; text-align: center; z-index: 100"
+              [sticky]="true">
+              <tui-loader size="l" [showLoader]="isOperationsLoading()">
+                <button
+                  tuiIconButton
+                  size="l"
+                  appearance="flat"
+                  iconStart="frame"
+                  (click)="onFullScreenModeChange()">
+                  Change screen mode
+                </button>
+              </tui-loader>
+            </th>
+            <th
+              tuiTh
+              style="text-align: center"
+              *ngFor="let item of store() | sortById"
+              [sticky]="true">
+              <div>{{ item.title }}</div>
+            </th>
+          </tr>
         </thead>
 
         <tbody tuiTbody [data]="store() | sortById">
-        <tr *ngFor="let f of fields(); let lastField = last">
-          <th tuiTd>{{ f.label }}</th>
+          <tr *ngFor="let f of fields(); let lastField = last">
+            <th tuiTd>{{ f.label }}</th>
 
-          <!-- для каждого товара выводим значение поля -->
-          @for (item of store() | sortById; track item.id) {
-            <td tuiTd style="text-align:center;" [ngStyle]="{'padding': lastField ? '0': '12px'}">
-              <ng-container [ngSwitch]="f.key">
-                <!-- raw CNY -->
-                <ng-container *ngSwitchCase="'cost_price'">
-                  <div class="table__cell-item">
-                    <app-cost-chip appearance="outline" [isDecimal]="true" [currency]="currencies.CNY" [value]="item.cost_price"/>
-                    <app-cost-chip appearance="primary" [currency]="currencies.KZT" [value]="computeCostPriceUpd(item)"/>
-                    <app-cost-chip appearance="secondary" [currency]="currencies.RUB" [value]="computeCostPriceUpd(item) / kztCurrency()"/>
-                  </div>
-                </ng-container>
-
-                <!-- цена конкурента (RUB и KZT) -->
-                <ng-container *ngSwitchCase="'competitors_price'">
-                  <div class="table__cell-item">
-                    <app-cost-chip appearance="primary" [currency]="currencies.KZT" [value]="item.competitors_price * kztCurrency()"/>
-                    <app-cost-chip appearance="secondary" [currency]="currencies.RUB" [value]="item.competitors_price"/>
-                  </div>
-                </ng-container>
-
-                <!-- моя цена -->
-                <ng-container *ngSwitchCase="'my_cost'">
-                  <div class="table__cell-item">
-                    <app-cost-chip appearance="primary" [currency]="currencies.KZT" [value]="item.my_cost"/>
-                    <app-cost-chip appearance="secondary" [currency]="currencies.RUB" [value]="item.my_cost / kztCurrency()"/>
-                  </div>
-                </ng-container>
-
-                <!-- маржа -->
-                <ng-container *ngSwitchCase="'result'">
-                  <div class="table__cell-item">
-                    <app-cost-chip appearance="primary" [currency]="currencies.KZT" [value]="computeResult(item)"/>
-                    <app-cost-chip appearance="secondary" [currency]="currencies.RUB" [value]="computeResult(item) / kztCurrency()"/>
-                  </div>
-                </ng-container>
-
-                <!-- Наличие -->
-                <ng-container *ngSwitchCase="'amount'">
-                  <div class="table__cell-item">
-                    <tui-chip size="s" [appearance]="item.amount ? 'outline' : 'outline-destructive'">
-                      {{ item.amount }} шт.
-                    </tui-chip>
-                    <tui-chip size="s" appearance="secondary">
-                      {{ item.sold }} шт.
-                    </tui-chip>
-                  </div>
-                </ng-container>
-
-                @if(!isFullScreen()) {
-                  <ng-container *ngSwitchCase="'operations'">
-                    <div>
-                      <button
-                        tuiIconButton
-                        size="m"
-                        appearance="flat"
-                        iconStart="pencil"
-                        (click)="editOne(item)">Ред.</button>
-                      <button
-                        tuiIconButton
-                        size="m"
-                        appearance="flat-destructive"
-                        iconStart="trash"
-                        (click)="deleteOne(item)">Удал.</button>
+            <!-- для каждого товара выводим значение поля -->
+            @for (item of store() | sortById; track item.id) {
+              <td
+                tuiTd
+                style="text-align: center"
+                [ngStyle]="{ padding: lastField ? '0' : '12px' }">
+                <ng-container [ngSwitch]="f.key">
+                  <!-- raw CNY -->
+                  <ng-container *ngSwitchCase="'cost_price'">
+                    <div class="table__cell-item">
+                      <app-cost-chip
+                        appearance="outline"
+                        [isDecimal]="true"
+                        [currency]="currencies.CNY"
+                        [value]="item.cost_price" />
+                      <app-cost-chip
+                        appearance="primary"
+                        [currency]="currencies.KZT"
+                        [value]="computeCostPriceUpd(item)" />
+                      <app-cost-chip
+                        appearance="secondary"
+                        [currency]="currencies.RUB"
+                        [value]="computeCostPriceUpd(item) / kztCurrency()" />
                     </div>
                   </ng-container>
-                }
 
-                <ng-container *ngSwitchDefault>
-                  —
+                  <!-- цена конкурента (RUB и KZT) -->
+                  <ng-container *ngSwitchCase="'competitors_price'">
+                    <div class="table__cell-item">
+                      <app-cost-chip
+                        appearance="primary"
+                        [currency]="currencies.KZT"
+                        [value]="item.competitors_price * kztCurrency()" />
+                      <app-cost-chip
+                        appearance="secondary"
+                        [currency]="currencies.RUB"
+                        [value]="item.competitors_price" />
+                    </div>
+                  </ng-container>
+
+                  <!-- моя цена -->
+                  <ng-container *ngSwitchCase="'my_cost'">
+                    <div class="table__cell-item">
+                      <app-cost-chip
+                        appearance="primary"
+                        [currency]="currencies.KZT"
+                        [value]="item.my_cost" />
+                      <app-cost-chip
+                        appearance="secondary"
+                        [currency]="currencies.RUB"
+                        [value]="item.my_cost / kztCurrency()" />
+                    </div>
+                  </ng-container>
+
+                  <!-- маржа -->
+                  <ng-container *ngSwitchCase="'result'">
+                    <div class="table__cell-item">
+                      <app-cost-chip
+                        appearance="primary"
+                        [currency]="currencies.KZT"
+                        [value]="computeResult(item)" />
+                      <app-cost-chip
+                        appearance="secondary"
+                        [currency]="currencies.RUB"
+                        [value]="computeResult(item) / kztCurrency()" />
+                    </div>
+                  </ng-container>
+
+                  <!-- Наличие -->
+                  <ng-container *ngSwitchCase="'amount'">
+                    <div class="table__cell-item">
+                      <tui-chip
+                        size="s"
+                        [appearance]="
+                          item.amount ? 'outline' : 'outline-destructive'
+                        ">
+                        {{ item.amount }} шт.
+                      </tui-chip>
+                      <tui-chip size="s" appearance="secondary">
+                        {{ item.sold }} шт.
+                      </tui-chip>
+                    </div>
+                  </ng-container>
+
+                  @if (!isFullScreen()) {
+                    <ng-container *ngSwitchCase="'operations'">
+                      <div>
+                        <button
+                          tuiIconButton
+                          size="m"
+                          appearance="flat"
+                          iconStart="pencil"
+                          (click)="editOne(item)">
+                          Ред.
+                        </button>
+                        <button
+                          tuiIconButton
+                          size="m"
+                          appearance="flat-destructive"
+                          iconStart="trash"
+                          (click)="deleteOne(item)">
+                          Удал.
+                        </button>
+                      </div>
+                    </ng-container>
+                  }
+
+                  <ng-container *ngSwitchDefault> — </ng-container>
                 </ng-container>
-              </ng-container>
-            </td>
-          }
-        </tr>
+              </td>
+            }
+          </tr>
         </tbody>
       </table>
     </tui-loader>
   </tui-scrollbar>
 
-  @if(!isFullScreen()) {
+  @if (!isFullScreen()) {
     <section class="main__currency">
-      <div style="display:flex; gap: 8px; width: 100%; align-items: center">
+      <div style="display: flex; gap: 8px; width: 100%; align-items: center">
         <button
           tuiIconButton
           size="l"
           appearance="glass"
           [iconStart]="isDarkTheme() ? 'moon' : 'sun'"
-          (click)="onThemeChange()">Change theme</button>
+          (click)="onThemeChange()">
+          Change theme
+        </button>
 
-        <tui-textfield class="main__currency-item" [tuiTextfieldCleaner]="false">
+        <tui-textfield
+          class="main__currency-item"
+          [tuiTextfieldCleaner]="false">
           <label tuiLabel>CNY</label>
           <input
             placeholder="Введи курс"
             tuiInputNumber
-            [(ngModel)]="uanCurrency"
-          />
+            [(ngModel)]="uanCurrency" />
         </tui-textfield>
-        <tui-textfield class="main__currency-item" [tuiTextfieldCleaner]="false">
+        <tui-textfield
+          class="main__currency-item"
+          [tuiTextfieldCleaner]="false">
           <label tuiLabel>RUB</label>
           <input
             placeholder="Введи курс"
             tuiInputNumber
-            [tuiNumberFormat]="{precision: 1}"
-            [(ngModel)]="kztCurrency"
-          />
+            [tuiNumberFormat]="{ precision: 1 }"
+            [(ngModel)]="kztCurrency" />
         </tui-textfield>
 
-        <tui-textfield class="main__currency-item"  [tuiTextfieldCleaner]="false">
+        <tui-textfield
+          class="main__currency-item"
+          [tuiTextfieldCleaner]="false">
           <label tuiLabel>+ %</label>
           <input
             placeholder="Введи процент"
             tuiInputNumber
-            [(ngModel)]="percent"
-          />
+            [(ngModel)]="percent" />
         </tui-textfield>
 
         <button
@@ -147,8 +198,7 @@
           appearance="primary"
           type="button"
           iconStart="plus"
-          (click)="addOne()"
-        >
+          (click)="addOne()">
           Добавить товар
         </button>
 
@@ -158,8 +208,7 @@
           iconStart="trending-up"
           appearance="primary"
           type="button"
-          (click)="onCellButtonClick()"
-        >
+          (click)="onCellButtonClick()">
           Продать
         </button>
       </div>

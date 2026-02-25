@@ -1,25 +1,36 @@
 <div class="cell-dialog" [class.cell-dialog_with-statistic]="expanded()">
   <tui-expand [expanded]="expanded()">
     <ng-template tuiExpandContent>
-      <div style="display: flex; flex-direction: column; gap: 16px;">
+      <div style="display: flex; flex-direction: column; gap: 16px">
         <div tuiSurface="outline" class="statistic">
           <div class="statistic__item">
-            <h3 style="margin: 0;">Расходы</h3>
+            <h3 style="margin: 0">Расходы</h3>
 
-            <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sumCostInKzt() }"/>
+            <ng-container
+              *ngTemplateOutlet="
+                chipList;
+                context: { $implicit: sumCostInKzt() }
+              " />
           </div>
         </div>
 
-
         <div tuiSurface="outline" class="statistic">
           <div class="statistic__item">
-            <h3 style="margin: 0;">Доходы</h3>
+            <h3 style="margin: 0">Доходы</h3>
 
             <div style="display: flex; flex-direction: column; gap: 16px">
-              <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sumMyCostInKzt() }"/>
+              <ng-container
+                *ngTemplateOutlet="
+                  chipList;
+                  context: { $implicit: sumMyCostInKzt() }
+                " />
 
               @if (sumMyCostSellsInKzt(); as sum) {
-                <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sum, prefix: '+ ' }"/>
+                <ng-container
+                  *ngTemplateOutlet="
+                    chipList;
+                    context: { $implicit: sum, prefix: '+ ' }
+                  " />
               }
             </div>
           </div>
@@ -27,13 +38,21 @@
 
         <div tuiSurface="outline" class="statistic">
           <div class="statistic__item">
-            <h3 style="margin: 0;">Прибыль</h3>
+            <h3 style="margin: 0">Прибыль</h3>
 
             <div style="display: flex; flex-direction: column; gap: 16px">
-              <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sumSoldInKzt() }"/>
+              <ng-container
+                *ngTemplateOutlet="
+                  chipList;
+                  context: { $implicit: sumSoldInKzt() }
+                " />
 
               @if (sumSellInKzt(); as sum) {
-                <ng-container *ngTemplateOutlet="chipList, context: { $implicit: sum, prefix: '+ ' }"/>
+                <ng-container
+                  *ngTemplateOutlet="
+                    chipList;
+                    context: { $implicit: sum, prefix: '+ ' }
+                  " />
               }
             </div>
           </div>
@@ -44,27 +63,46 @@
 
   <tui-scrollbar style="flex-grow: 1">
     <section class="sold-list">
-      @for(soldGroup of form.controls; track soldGroup) {
+      @for (soldGroup of form.controls; track soldGroup) {
         <form class="sold-item" [formGroup]="soldGroup">
-          <tui-chip tuiFade size="m" appearance="secondary" style="flex: 1 1 auto; display: flex; justify-content: space-between">
-            <span>{{soldGroup.controls['title'].value}}</span>
-            <span>{{soldGroup.controls['amount'].value}} шт.</span>
+          <tui-chip
+            tuiFade
+            size="m"
+            appearance="secondary"
+            style="
+              flex: 1 1 auto;
+              display: flex;
+              justify-content: space-between;
+            ">
+            <span>{{ soldGroup.controls['title'].value }}</span>
+            <span>{{ soldGroup.controls['amount'].value }} шт.</span>
 
             <div style="display: flex; gap: 16px">
               @let myCost = soldGroup.controls['myCost'].value;
               @let myCostSold = myCost * soldGroup.controls['sold'].value;
 
-              <app-cost-chip appearance="secondary" [currency]="currencies.KZT" [value]="myCostSold"/>
-              <app-cost-chip appearance="primary" [currency]="currencies.RUB" [value]="myCostSold / kztCurrency()"/>
+              <app-cost-chip
+                appearance="secondary"
+                [currency]="currencies.KZT"
+                [value]="myCostSold" />
+              <app-cost-chip
+                appearance="primary"
+                [currency]="currencies.RUB"
+                [value]="myCostSold / kztCurrency()" />
             </div>
           </tui-chip>
 
-          <tui-textfield style="min-width: 60px; max-width: fit-content; max-height: var(--tui-height-m);" [tuiTextfieldCleaner]="false">
+          <tui-textfield
+            style="
+              min-width: 60px;
+              max-width: fit-content;
+              max-height: var(--tui-height-m);
+            "
+            [tuiTextfieldCleaner]="false">
             <input
-              style="text-align: center;"
+              style="text-align: center"
               tuiInputNumber
-              formControlName="sold"
-            />
+              formControlName="sold" />
           </tui-textfield>
 
           <button
@@ -73,8 +111,7 @@
             appearance="outline-destructive"
             type="button"
             iconStart="x"
-            (click)="deleteOne($index)"
-          >
+            (click)="deleteOne($index)">
             Удалить продажу
           </button>
         </form>
@@ -88,15 +125,18 @@
       <input
         disabled
         placeholder="Отсортированы как в таблице"
-        tuiTextfieldLegacy
-      />
+        tuiTextfieldLegacy />
       <tui-data-list-wrapper
-        *tuiDataList
         emptyContent="Нет товаров в наличии"
-        [items]="items() | tuiFilterByInput | sortById | filterWithAmount | filterByAddedSell : addedSellIds()"
-      />
+        *tuiDataList
+        [items]="
+          items()
+            | tuiFilterByInput
+            | sortById
+            | filterWithAmount
+            | filterByAddedSell: addedSellIds()
+        " />
     </tui-select>
-
 
     <div style="display: flex; gap: 16px">
       <button
@@ -105,11 +145,15 @@
         type="button"
         iconStart="chart-no-axes-combined"
         [appearance]="expanded() ? 'secondary-destructive' : 'secondary'"
-        (click)="expanded.set(!expanded())"
-      >Статистика
+        (click)="expanded.set(!expanded())">
+        Статистика
       </button>
 
-      <tui-loader style="width: 100%" size="m" [overlay]="true" [showLoader]="isLoading()">
+      <tui-loader
+        style="width: 100%"
+        size="m"
+        [overlay]="true"
+        [showLoader]="isLoading()">
         <button
           style="width: 100%"
           size="m"
@@ -117,8 +161,7 @@
           appearance="primary"
           type="submit"
           [disabled]="isLoading() || !form.length"
-          (click)="onSellButtonClick()"
-        >
+          (click)="onSellButtonClick()">
           Продать
         </button>
       </tui-loader>
@@ -126,11 +169,19 @@
   </div>
 </div>
 
-<ng-template #chipList let-kzt let-prefix="prefix">
+<ng-template let-kzt let-prefix="prefix" #chipList>
   <div style="display: flex; flex-direction: column; gap: 16px">
     <div style="display: flex; gap: 16px; justify-content: space-between">
-      <app-cost-chip appearance="secondary" [prefix]="prefix" [currency]="currencies.KZT" [value]="kzt / kztCurrency()"/>
-      <app-cost-chip appearance="primary" [prefix]="prefix" [currency]="currencies.RUB" [value]="kzt"/>
+      <app-cost-chip
+        appearance="secondary"
+        [prefix]="prefix"
+        [currency]="currencies.KZT"
+        [value]="kzt / kztCurrency()" />
+      <app-cost-chip
+        appearance="primary"
+        [prefix]="prefix"
+        [currency]="currencies.RUB"
+        [value]="kzt" />
     </div>
   </div>
 </ng-template>

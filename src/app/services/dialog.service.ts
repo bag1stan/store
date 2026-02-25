@@ -1,11 +1,12 @@
 import { inject, Injectable, Injector } from '@angular/core';
 import { TuiDialogService } from '@taiga-ui/core';
-import { Product } from '../interfaces/product.interface';
 import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
-import { AddOneDialogComponent } from '../components/add-one-dialog/add-one-dialog.component';
 import { filter } from 'rxjs';
-import { UiConfirmationDialogComponent } from '../components/confirm-dialog/ui-confirmation-dialog.component';
+
+import { AddOneDialogComponent } from '../components/add-one-dialog/add-one-dialog.component';
 import { SellDialogComponent } from '../components/cell-dialog/sell-dialog.component';
+import { UiConfirmationDialogComponent } from '../components/confirm-dialog/ui-confirmation-dialog.component';
+import { Product } from '../interfaces/product.interface';
 
 @Injectable()
 export class DialogService {

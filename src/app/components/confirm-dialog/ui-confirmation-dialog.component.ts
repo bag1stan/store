@@ -5,7 +5,6 @@ import { injectContext } from '@taiga-ui/polymorpheus';
 import { ConfirmationDialogData } from './confirmation-dialog-data.interface';
 
 @Component({
-  selector: 'main-ui-confirmation-dialog',
   imports: [TuiButton],
   templateUrl: './ui-confirmation-dialog.component.html',
 })

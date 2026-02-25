@@ -1,11 +1,7 @@
-<form [formGroup]="form" class="add-one">
+<form class="add-one" [formGroup]="form">
   <tui-textfield [tuiTextfieldCleaner]="false">
     <label tuiLabel>Название</label>
-    <input
-      placeholder="Введи название"
-      tuiTextfield
-      formControlName="title"
-    />
+    <input placeholder="Введи название" tuiTextfield formControlName="title" />
   </tui-textfield>
 
   <tui-textfield [tuiTextfieldCleaner]="false">
@@ -13,8 +9,7 @@
     <input
       placeholder="Количество шт."
       tuiInputNumber
-      formControlName="amount"
-    />
+      formControlName="amount" />
   </tui-textfield>
 
   @if (isEditMode) {
@@ -23,69 +18,75 @@
       <input
         placeholder="Количество шт."
         tuiInputNumber
-        formControlName="sold"
-      />
+        formControlName="sold" />
     </tui-textfield>
   }
 
-  <tui-textfield [tuiTextfieldCleaner]="false" iconStart="japanese-yen">
+  <tui-textfield iconStart="japanese-yen" [tuiTextfieldCleaner]="false">
     <label tuiLabel>Себестоимость</label>
     <input
       placeholder="Введи цифру в юанях"
       tuiInputNumber
-      formControlName="cost_price"
-    />
+      formControlName="cost_price" />
   </tui-textfield>
 
-  <div style="display: flex; width: 100%; justify-content: space-between; gap: 16px">
+  <div
+    style="
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      gap: 16px;
+    ">
     <tui-textfield
-      [tuiTextfieldCleaner]="false"
       iconStart="russian-ruble"
-      style="width: 100%">
+      style="width: 100%"
+      [tuiTextfieldCleaner]="false">
       <label tuiLabel>Конкурент</label>
       <input
         tuiInputNumber
         formControlName="competitors_price"
-        (input)="onRubCompetitorsInput()"
-      />
+        (input)="onRubCompetitorsInput()" />
     </tui-textfield>
 
     <tui-textfield
+      style="width: 100%"
       [tuiTextfieldCleaner]="false"
-      [iconStart]="kztSvgIcon"
-      style="width: 100%">
+      [iconStart]="kztSvgIcon">
       <label tuiLabel>Конкурент</label>
       <input
         tuiInputNumber
         [formControl]="competitorsKztControl"
-        (input)="onKztCompetitorsInput()"
-      />
+        (input)="onKztCompetitorsInput()" />
     </tui-textfield>
   </div>
 
-  <div style="display: flex; width: 100%; justify-content: space-between; gap: 16px">
+  <div
+    style="
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      gap: 16px;
+    ">
     <tui-textfield
-      [tuiTextfieldCleaner]="false"
       iconStart="russian-ruble"
-      style="width: 100%">
+      style="width: 100%"
+      [tuiTextfieldCleaner]="false">
       <label tuiLabel>Моя цена</label>
       <input
         tuiInputNumber
         [formControl]="myCostRubControl"
-        (input)="onRubMyCostInput()"
-      />
+        (input)="onRubMyCostInput()" />
     </tui-textfield>
 
     <tui-textfield
+      style="width: 100%"
       [tuiTextfieldCleaner]="false"
-      [iconStart]="kztSvgIcon"
-      style="width: 100%">
+      [iconStart]="kztSvgIcon">
       <label tuiLabel>Моя цена</label>
       <input
         tuiInputNumber
         formControlName="my_cost"
-        (input)="onKztMyCostInput()"
-      />
+        (input)="onKztMyCostInput()" />
     </tui-textfield>
   </div>
 
@@ -94,8 +95,7 @@
     tuiButton
     appearance="primary"
     type="submit"
-    (click)="addOne()"
-  >
+    (click)="addOne()">
     {{ data ? 'Редактировать товар' : 'Добавить товар' }}
   </button>
 </form>

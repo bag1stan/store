@@ -1,6 +1,7 @@
-<div style="display: flex; flex-direction: column; gap: 24px; padding-top: 24px">
+<div
+  style="display: flex; flex-direction: column; gap: 24px; padding-top: 24px">
   @if (context.data?.content; as content) {
-    {{content}}
+    {{ content }}
   }
   <div style="display: flex; place-content: flex-end; gap: 16px">
     @if (context.data?.secondaryButtonText; as secondaryButtonText) {

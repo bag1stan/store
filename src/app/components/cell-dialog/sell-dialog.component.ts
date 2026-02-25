@@ -1,5 +1,12 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {
   TuiAlertService,
   TuiButton,
@@ -21,20 +28,18 @@ import {
   TuiInputNumber,
   tuiItemsHandlersProvider,
 } from '@taiga-ui/kit';
-import { injectContext } from '@taiga-ui/polymorpheus';
-import { Product } from '../../interfaces/product.interface';
-import { StateService } from '../../services/state.service';
 import { TuiSelectModule } from '@taiga-ui/legacy';
+import { injectContext } from '@taiga-ui/polymorpheus';
 import { catchError, EMPTY, filter, tap } from 'rxjs';
-import { ApiService } from '../../services/api.service';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { NgTemplateOutlet } from '@angular/common';
-import { SortByIdPipe } from '../../pipes/sort-by-id.pipe';
-import { FilterWithAmountPipe } from '../../pipes/filter-with-amount.pipe';
-import { FilterByAddedSellPipe } from '../../pipes/filter-by-added-sell.pipe';
-import { CostChip } from '../../shared/components/cost-chip/cost-chip';
-import { CurrencyCode } from '../../shared/enums/currency-code.enum';
 
+import { Product } from '../../interfaces/product.interface';
+import { FilterByAddedSellPipe } from '../../pipes/filter-by-added-sell.pipe';
+import { FilterWithAmountPipe } from '../../pipes/filter-with-amount.pipe';
+import { SortByIdPipe } from '../../pipes/sort-by-id.pipe';
+import { ApiService } from '../../services/api.service';
+import { StateService } from '../../services/state.service';
+import { CostChipComponent } from '../../shared/components/cost-chip/cost-chip.component';
+import { CurrencyCode } from '../../shared/enums/currency-code.enum';
 
 @Component({
   imports: [
@@ -58,18 +63,18 @@ import { CurrencyCode } from '../../shared/enums/currency-code.enum';
     SortByIdPipe,
     FilterWithAmountPipe,
     FilterByAddedSellPipe,
-    CostChip,
+    CostChipComponent,
   ],
   providers: [
     tuiItemsHandlersProvider({
-      stringify: ((x: Product) => x.title),
+      stringify: (x: Product) => x.title,
     }),
   ],
   templateUrl: './sell-dialog.component.html',
-  styleUrl: './sell-dialog.component.scss'
+  styleUrl: './sell-dialog.component.scss',
 })
 export class SellDialogComponent {
-  private readonly fb =  inject(FormBuilder);
+  private readonly fb = inject(FormBuilder);
   private readonly alertService = inject(TuiAlertService);
   private readonly context = injectContext<TuiDialogContext<unknown, void>>();
 
@@ -83,7 +88,7 @@ export class SellDialogComponent {
 
   readonly currencies = CurrencyCode;
 
-  readonly items =  computed(() => this.stateService.state());
+  readonly items = computed(() => this.stateService.state());
   readonly isLoading = signal(false);
   readonly expanded = signal(true);
 
@@ -102,9 +107,9 @@ export class SellDialogComponent {
 
       const price = this.computeCostPriceUpd(product);
 
-      return acc + (price * product.amount) + (price * product.sold);
-    }, 0)
-  })
+      return acc + price * product.amount + price * product.sold;
+    }, 0);
+  });
 
   readonly sumMyCostInKzt = computed(() => {
     const products = this.stateService.state();
@@ -114,9 +119,9 @@ export class SellDialogComponent {
         return acc;
       }
 
-      return acc + (product.my_cost * product.sold)
-    }, 0)
-  })
+      return acc + product.my_cost * product.sold;
+    }, 0);
+  });
 
   readonly sumSoldInKzt = computed(() => {
     const products = this.stateService.state();
@@ -126,27 +131,11 @@ export class SellDialogComponent {
         return acc;
       }
 
-      return acc + (this.computeResult(product) * product.sold)
-    }, 0)
-  })
+      return acc + this.computeResult(product) * product.sold;
+    }, 0);
+  });
 
   readonly formChanges = toSignal(this.form.valueChanges);
-
-  sumMyCostSellsInKzt = computed(() => {
-    const changes = this.formChanges();
-
-    if (!changes?.length) {
-      return null;
-    }
-
-    const sells = changes.map(({id}) =>
-      ({...this.productEntities()[id], ...changes.find(product => product.id === id ) })
-    );
-
-    return sells.reduce((acc, sell) => {
-      return acc + (sell.my_cost * sell.sold)
-    }, 0)
-  });
 
   readonly sumSellInKzt = computed(() => {
     const changes = this.formChanges();
@@ -155,57 +144,60 @@ export class SellDialogComponent {
       return null;
     }
 
-    const sells = changes.map(({id}) =>
-      ({...this.productEntities()[id], ...changes.find(product => product.id === id ) })
-    );
+    const sells = changes.map(({ id }) => ({
+      ...this.productEntities()[id],
+      ...changes.find((product) => product.id === id),
+    }));
 
     return sells.reduce((acc, sell) => {
-      return acc + (this.computeResult(sell) * sell.sold)
-    }, 0)
-  })
+      return acc + this.computeResult(sell) * sell.sold;
+    }, 0);
+  });
+  sumMyCostSellsInKzt = computed(() => {
+    const changes = this.formChanges();
+
+    if (!changes?.length) {
+      return null;
+    }
+
+    const sells = changes.map(({ id }) => ({
+      ...this.productEntities()[id],
+      ...changes.find((product) => product.id === id),
+    }));
+
+    return sells.reduce((acc, sell) => {
+      return acc + sell.my_cost * sell.sold;
+    }, 0);
+  });
 
   constructor() {
-    this.cellItemControl.valueChanges.pipe(
-      filter(Boolean),
-      tap((product) => {
-        const hasSold = this.form.controls.some(({value}) => value.id === product.id);
-        if (hasSold) {
-          this.showAlert('Товар уже добавлен');
+    this.cellItemControl.valueChanges
+      .pipe(
+        filter(Boolean),
+        tap((product) => {
+          const hasSold = this.form.controls.some(
+            ({ value }) => value.id === product.id
+          );
+
+          if (hasSold) {
+            this.showAlert('Товар уже добавлен');
+            this.cellItemControl.reset();
+
+            return;
+          }
+
+          this.addNewGroup(product);
           this.cellItemControl.reset();
-
-          return;
-        }
-
-        this.addNewGroup(product);
-        this.cellItemControl.reset()
-      }),
-      takeUntilDestroyed()
-    ).subscribe()
-  }
-
-  private addNewGroup({ id, title, amount, my_cost }: Product): void {
-    this.addedSellIds.update(v => [ ...v, id ]);
-
-    this.form.push(
-      this.fb.nonNullable.group({
-        id,
-        title,
-        amount,
-        myCost: my_cost,
-        sold: this.fb.control(1, [Validators.required, Validators.min(1), Validators.max(amount)]), })
-    )
-  }
-
-  deleteOne(index: number): void {
-    const sellId = this.form.at(index).value.id;
-    this.addedSellIds.update(v => v.filter((id) => id !== sellId));
-
-    this.form.removeAt(index);
+        }),
+        takeUntilDestroyed()
+      )
+      .subscribe();
   }
 
   onSellButtonClick() {
     if (this.form.invalid) {
-      this.showAlert('Заполни все поля правильно')
+      this.showAlert('Заполни все поля правильно');
+
       return;
     }
 
@@ -214,43 +206,63 @@ export class SellDialogComponent {
     const sells: Product[] = this.form.value;
     const productEntities = this.stateService.stateEntities();
 
-    const updatedSells: Product[] = sells.map(
-      ({ id, sold}) => {
-        const productState = productEntities[id];
+    const updatedSells: Product[] = sells.map(({ id, sold }) => {
+      const productState = productEntities[id];
 
-        return {
-          ...productState,
-          amount: productState.amount - sold,
-          sold: productState.sold + sold
-        };
-      }
-    )
+      return {
+        ...productState,
+        amount: productState.amount - sold,
+        sold: productState.sold + sold,
+      };
+    });
 
-    this.api.updateBatch(updatedSells).pipe(
-      tap(({ updates }) => {
-        const updatedProductEntities = updates.reduce(
-          (acc, product) => ({...acc, [product.id]: product}),
-          {} as Record<string, Product>);
-        const updatedProductIds = Object.keys(updatedProductEntities);
+    this.api
+      .updateBatch(updatedSells)
+      .pipe(
+        tap(({ updates }) => {
+          const updatedProductEntities = updates.reduce(
+            (acc, product) => ({ ...acc, [product.id]: product }),
+            {} as Record<string, Product>
+          );
+          const updatedProductIds = Object.keys(updatedProductEntities);
 
-        this.stateService.state.update(state =>
-          state.map((product) =>
-            updatedProductIds.includes(String(product.id))
-              ? updatedProductEntities[product.id]
-              : product
-          ),
-        );
+          this.stateService.state.update((state) =>
+            state.map((product) =>
+              updatedProductIds.includes(String(product.id))
+                ? updatedProductEntities[product.id]
+                : product
+            )
+          );
 
-        this.isLoading.set(false);
-        this.context.completeWith(null);
-      }),
-      catchError(() => {
-        this.showAlert('Возникла ошибка, попробуй снова');
-        this.isLoading.set(false);
+          this.isLoading.set(false);
+          this.context.completeWith(null);
+        }),
+        catchError(() => {
+          this.showAlert('Возникла ошибка, попробуй снова');
+          this.isLoading.set(false);
 
-        return EMPTY
+          return EMPTY;
+        })
+      )
+      .subscribe();
+  }
+
+  private addNewGroup({ id, title, amount, my_cost }: Product): void {
+    this.addedSellIds.update((v) => [...v, id]);
+
+    this.form.push(
+      this.fb.nonNullable.group({
+        id,
+        title,
+        amount,
+        myCost: my_cost,
+        sold: this.fb.control(1, [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(amount),
+        ]),
       })
-    ).subscribe()
+    );
   }
 
   private showAlert(msg: string): void {
@@ -265,11 +277,20 @@ export class SellDialogComponent {
   private computeResult(item: Product): number {
     const compKzt = item.my_cost;
     const costUpd = this.computeCostPriceUpd(item);
+
     return compKzt - costUpd;
   }
 
   private computeCostPriceUpd(item: Product): number {
-    const percent = (this.percent() + 100) / 100
+    const percent = (this.percent() + 100) / 100;
+
     return item.cost_price * percent * this.uanCurrency();
+  }
+
+  deleteOne(index: number): void {
+    const sellId = this.form.at(index).value.id;
+    this.addedSellIds.update((v) => v.filter((id) => id !== sellId));
+
+    this.form.removeAt(index);
   }
 }
