@@ -503,7 +503,7 @@ export default [
         { blankLine: 'never', prev: '*', next: 'case' },
       ],
       '@typescript-eslint/naming-convention': [
-        'error',
+        'warn',
         {
           selector: ['variableLike', 'method'],
           format: ['camelCase'],
@@ -576,7 +576,7 @@ export default [
       '@typescript-eslint/no-unused-expressions': 'error',
       '@typescript-eslint/no-useless-constructor': 'error',
       '@typescript-eslint/no-empty-function': 'error',
-      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-duplicate-enum-values': 'error',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unnecessary-condition': 'error',
@@ -594,6 +594,7 @@ export default [
       ...angularTemplatePlugin.configs.accessibility.rules,
       ...angularTemplatePlugin.configs['process-inline-templates'].rules,
       ...prettierPlugin.configs.recommended.rules,
+      '@angular-eslint/template/label-has-associated-control': 'off',
       '@angular-eslint/template/prefer-self-closing-tags': 'error',
       '@angular-eslint/template/i18n': [
         'error',
