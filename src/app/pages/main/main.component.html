@@ -31,7 +31,7 @@
                 <!-- raw CNY -->
                 <ng-container *ngSwitchCase="'cost_price'">
                   <div class="table__cell-item">
-                    <app-cost-chip appearance="outline" [currency]="currencies.CNY" [value]="item.cost_price"/>
+                    <app-cost-chip appearance="outline" [isDecimal]="true" [currency]="currencies.CNY" [value]="item.cost_price"/>
                     <app-cost-chip appearance="primary" [currency]="currencies.KZT" [value]="computeCostPriceUpd(item)"/>
                     <app-cost-chip appearance="secondary" [currency]="currencies.RUB" [value]="computeCostPriceUpd(item) / kztCurrency()"/>
                   </div>

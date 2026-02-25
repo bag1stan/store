@@ -20,6 +20,7 @@ export class CostChip {
   readonly currency = input(CurrencyCode.KZT);
 
   readonly prefix = input('')
+  readonly isDecimal = input(false);
 
   readonly size = input<TuiSizeXXS>('s')
   readonly appearance = input<TuiAppearanceOptions['appearance']>('primary');
