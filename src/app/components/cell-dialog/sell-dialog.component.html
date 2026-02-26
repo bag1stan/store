@@ -1,5 +1,7 @@
-<div class="cell-dialog" [class.cell-dialog_with-statistic]="expanded()">
-  <tui-expand [expanded]="expanded()">
+<div
+  class="cell-dialog"
+  [class.cell-dialog_with-statistic]="statisticExpanded()">
+  <tui-expand [expanded]="statisticExpanded()">
     <ng-template tuiExpandContent>
       <div style="display: flex; flex-direction: column; gap: 16px">
         <div tuiSurface="outline" class="statistic">
@@ -75,29 +77,32 @@
               justify-content: space-between;
             ">
             <span>{{ soldGroup.controls['title'].value }}</span>
-            <span>{{ soldGroup.controls['amount'].value }} шт.</span>
 
-            <div style="display: flex; gap: 16px">
+            <div style="display: flex; gap: 16px; align-items: center">
+              <span>{{ soldGroup.controls['amount'].value }} шт.</span>
+
               @let myCost = soldGroup.controls['myCost'].value;
               @let myCostSold = myCost * soldGroup.controls['sold'].value;
 
-              <app-cost-chip
-                appearance="secondary"
-                [currency]="currencies.KZT"
-                [value]="myCostSold" />
-              <app-cost-chip
-                appearance="primary"
-                [currency]="currencies.RUB"
-                [value]="myCostSold / kztCurrency()" />
+              @switch (currentShowCost()) {
+                @case (currencies.RUB) {
+                  <app-cost-chip
+                    appearance="secondary"
+                    [suffix]="currencies.RUB"
+                    [value]="myCostSold / kztCurrency()" />
+                }
+                @case (currencies.KZT) {
+                  <app-cost-chip
+                    [suffix]="currencies.KZT"
+                    [value]="myCostSold" />
+                }
+              }
             </div>
           </tui-chip>
 
           <tui-textfield
-            style="
-              min-width: 60px;
-              max-width: fit-content;
-              max-height: var(--tui-height-m);
-            "
+            style="min-width: 60px; max-width: fit-content"
+            tuiTextfieldSize="m"
             [tuiTextfieldCleaner]="false">
             <input
               style="text-align: center"
@@ -106,7 +111,6 @@
           </tui-textfield>
 
           <app-icon-button
-            size="l"
             icon="x"
             appearance="outline-destructive"
             (clicked)="deleteOne($index)" />
@@ -116,29 +120,77 @@
   </tui-scrollbar>
 
   <div class="actions">
-    <tui-select [formControl]="cellItemControl">
-      Добавить товар к продаже
-      <input
-        disabled
-        placeholder="Отсортированы как в таблице"
-        tuiTextfieldLegacy />
-      <tui-data-list-wrapper
-        emptyContent="Нет товаров в наличии"
-        *tuiDataList
-        [items]="
-          items()
-            | tuiFilterByInput
-            | sortById
-            | filterWithAmount
-            | filterByAddedSell: addedSellIds()
-        " />
-    </tui-select>
+    <div style="display: flex; gap: 16px; width: 100%; align-items: center">
+      <tui-select style="flex: 1 0 auto" [formControl]="cellItemControl">
+        Добавить товар к продаже
+        <input
+          disabled
+          placeholder="Отсортированы как в таблице"
+          tuiTextfieldLegacy />
+        <tui-data-list-wrapper
+          emptyContent="Нет товаров в наличии"
+          *tuiDataList
+          [items]="
+            items()
+              | tuiFilterByInput
+              | sortById
+              | filterWithAmount
+              | filterByAddedSell: addedSellIds()
+          " />
+      </tui-select>
+    </div>
 
     <div style="display: flex; gap: 16px">
+      <button
+        tuiIconButton
+        tuiChevron
+        type="button"
+        size="m"
+        [appearance]="
+          currentShowCost() === null
+            ? 'flat-destructive'
+            : currentShowCost() === currencies.RUB
+              ? 'flat-grayscale'
+              : 'flat'
+        "
+        [iconStart]="
+          currentShowCost() === null
+            ? 'x'
+            : currentShowCost() === currencies.RUB
+              ? 'russian-ruble'
+              : kztSvg
+        "
+        [tuiDropdown]="dropdownContent"
+        [tuiDropdownManual]="openCostDropdown()"
+        [tuiObscuredEnabled]="openCostDropdown()"
+        (click)="openCostDropdown.set(!openCostDropdown())"
+        (tuiActiveZoneChange)="onActiveZone($event)"
+        (tuiObscured)="onObscured($event)">
+        Choose
+        <ng-template #dropdownContent>
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <app-icon-button
+              appearance="flat"
+              [icon]="kztSvg"
+              (clicked)="onDropdownItemClick(currencies.KZT)" />
+            <app-icon-button
+              appearance="flat-grayscale"
+              icon="russian-ruble"
+              (clicked)="onDropdownItemClick(currencies.RUB)" />
+            <app-icon-button
+              appearance="flat-destructive"
+              icon="x"
+              (clicked)="onDropdownItemClick(null)" />
+          </div>
+        </ng-template>
+      </button>
+
       <app-icon-button
         icon="chart-no-axes-combined"
-        [appearance]="expanded() ? 'secondary-destructive' : 'secondary'"
-        (clicked)="expanded.set(!expanded())" />
+        [appearance]="
+          !statisticExpanded() ? 'secondary-destructive' : 'secondary'
+        "
+        (clicked)="statisticExpanded.set(!statisticExpanded())" />
 
       <tui-loader
         style="width: 100%"
@@ -166,13 +218,12 @@
       <app-cost-chip
         appearance="secondary"
         [prefix]="prefix"
-        [currency]="currencies.KZT"
-        [value]="kzt / kztCurrency()" />
-      <app-cost-chip
-        appearance="primary"
-        [prefix]="prefix"
-        [currency]="currencies.RUB"
+        [suffix]="currencies.RUB"
         [value]="kzt" />
+      <app-cost-chip
+        [prefix]="prefix"
+        [suffix]="currencies.KZT"
+        [value]="kzt / kztCurrency()" />
     </div>
   </div>
 </ng-template>

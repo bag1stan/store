@@ -7,6 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { TuiActiveZone, TuiObscured } from '@taiga-ui/cdk';
 import {
   TuiAlertService,
   TuiButton,
@@ -21,6 +22,7 @@ import {
   TuiTextfieldOptionsDirective,
 } from '@taiga-ui/core';
 import {
+  TuiChevron,
   TuiChip,
   TuiDataListWrapperComponent,
   TuiFade,
@@ -28,10 +30,14 @@ import {
   TuiInputNumber,
   tuiItemsHandlersProvider,
 } from '@taiga-ui/kit';
-import { TuiSelectModule } from '@taiga-ui/legacy';
+import {
+  TuiSelectModule,
+  TuiTextfieldControllerModule,
+} from '@taiga-ui/legacy';
 import { injectContext } from '@taiga-ui/polymorpheus';
 import { filter, finalize, tap } from 'rxjs';
 
+import { kztSvg } from '../../icons/kzt.constant';
 import { Product } from '../../interfaces/product.interface';
 import { FilterByAddedSellPipe } from '../../pipes/filter-by-added-sell.pipe';
 import { FilterWithAmountPipe } from '../../pipes/filter-with-amount.pipe';
@@ -66,10 +72,16 @@ import { CurrencyCode } from '../../shared/enums/currency-code.enum';
     FilterByAddedSellPipe,
     CostChipComponent,
     IconButtonComponent,
+    TuiTextfieldControllerModule,
+    TuiChevron,
+    TuiObscured,
+    TuiActiveZone,
   ],
   providers: [
     tuiItemsHandlersProvider({
-      stringify: (x: Product) => x.title,
+      stringify: (x: Product | string) => {
+        return typeof x === 'string' ? x : x.title;
+      },
     }),
   ],
   templateUrl: './sell-dialog.component.html',
@@ -89,10 +101,15 @@ export class SellDialogComponent {
   readonly productEntities = this.stateService.stateEntities;
 
   readonly currencies = CurrencyCode;
+  readonly kztSvg = kztSvg;
+
+  readonly openCostDropdown = signal(false);
+  readonly currentShowCost = signal<CurrencyCode | null>(CurrencyCode.KZT);
 
   readonly items = computed(() => this.stateService.state());
   readonly isLoading = signal(false);
-  readonly expanded = signal(true);
+
+  readonly statisticExpanded = signal(true);
 
   readonly addedSellIds = signal<number[]>([]);
 
@@ -241,6 +258,21 @@ export class SellDialogComponent {
         finalize(() => this.isLoading.set(false))
       )
       .subscribe();
+  }
+
+  onObscured(obscured: boolean): void {
+    if (obscured) {
+      this.openCostDropdown.set(false);
+    }
+  }
+
+  onActiveZone(active: boolean): void {
+    this.openCostDropdown.set(active && this.openCostDropdown());
+  }
+
+  onDropdownItemClick(cost: CurrencyCode | null) {
+    this.currentShowCost.set(cost);
+    this.openCostDropdown.set(false);
   }
 
   private addNewGroup({ id, title, amount, my_cost }: Product): void {
