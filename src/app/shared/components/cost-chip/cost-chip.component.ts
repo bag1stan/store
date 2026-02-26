@@ -7,8 +7,6 @@ import {
 } from '@taiga-ui/core';
 import { TuiChip } from '@taiga-ui/kit';
 
-import { CurrencyCode } from '../../enums/currency-code.enum';
-
 @Component({
   selector: 'app-cost-chip',
   imports: [AsyncPipe, TuiChip, TuiFormatNumberPipe],
@@ -18,9 +16,9 @@ import { CurrencyCode } from '../../enums/currency-code.enum';
 export class CostChipComponent {
   readonly value = input.required<number>();
 
-  readonly currency = input(CurrencyCode.KZT);
-
+  readonly suffix = input('');
   readonly prefix = input('');
+
   readonly isDecimal = input(false);
 
   readonly size = input<TuiSizeXXS>('s');

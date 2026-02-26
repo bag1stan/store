@@ -43,15 +43,15 @@
                       <app-cost-chip
                         appearance="outline"
                         [isDecimal]="true"
-                        [currency]="currencies.CNY"
+                        [suffix]="currencies.CNY"
                         [value]="item.cost_price" />
                       <app-cost-chip
                         appearance="primary"
-                        [currency]="currencies.KZT"
+                        [suffix]="currencies.KZT"
                         [value]="computeCostPriceUpd(item)" />
                       <app-cost-chip
                         appearance="secondary"
-                        [currency]="currencies.RUB"
+                        [suffix]="currencies.RUB"
                         [value]="computeCostPriceUpd(item) / kztCurrency()" />
                     </div>
                   </ng-container>
@@ -61,11 +61,11 @@
                     <div class="table__cell-item">
                       <app-cost-chip
                         appearance="primary"
-                        [currency]="currencies.KZT"
+                        [suffix]="currencies.KZT"
                         [value]="item.competitors_price * kztCurrency()" />
                       <app-cost-chip
                         appearance="secondary"
-                        [currency]="currencies.RUB"
+                        [suffix]="currencies.RUB"
                         [value]="item.competitors_price" />
                     </div>
                   </ng-container>
@@ -75,11 +75,11 @@
                     <div class="table__cell-item">
                       <app-cost-chip
                         appearance="primary"
-                        [currency]="currencies.KZT"
+                        [suffix]="currencies.KZT"
                         [value]="item.my_cost" />
                       <app-cost-chip
                         appearance="secondary"
-                        [currency]="currencies.RUB"
+                        [suffix]="currencies.RUB"
                         [value]="item.my_cost / kztCurrency()" />
                     </div>
                   </ng-container>
@@ -89,11 +89,11 @@
                     <div class="table__cell-item">
                       <app-cost-chip
                         appearance="primary"
-                        [currency]="currencies.KZT"
+                        [suffix]="currencies.KZT"
                         [value]="computeResult(item)" />
                       <app-cost-chip
                         appearance="secondary"
-                        [currency]="currencies.RUB"
+                        [suffix]="currencies.RUB"
                         [value]="computeResult(item) / kztCurrency()" />
                     </div>
                   </ng-container>
