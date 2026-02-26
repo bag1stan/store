@@ -234,11 +234,11 @@
         appearance="secondary"
         [prefix]="prefix"
         [suffix]="currencies.RUB"
-        [value]="kzt" />
+        [value]="kzt / kztCurrency()" />
       <app-cost-chip
         [prefix]="prefix"
         [suffix]="currencies.KZT"
-        [value]="kzt / kztCurrency()" />
+        [value]="kzt" />
     </div>
   </div>
 </ng-template>
