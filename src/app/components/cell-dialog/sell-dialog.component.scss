@@ -1,38 +1,44 @@
 ::ng-deep.t-heading {
-  padding-inline-start: 16px;
-  padding-block-start: 16px;
+  padding-inline-start: 8px;
+  padding-block-start: 8px;
 }
 
 .cell-dialog {
   display: flex;
   flex-direction: column;
-  padding: 8px 16px 16px;
-  height: calc(100dvh - 48px - 28px);
-  max-height: calc(100dvh - 48px - 28px);
+  padding: 8px 8px 8px;
+  height: calc(100dvh - 48px - 24px);
+  max-height: calc(100dvh - 48px - 24px);
   justify-content: space-between;
 
+  @media (width < 768px) {
+    height: calc(100dvh - 48px - 12px);
+    max-height: calc(100dvh - 48px - 12px);
+  }
+
   &_with-statistic {
-    gap: 16px;
+    gap: 8px;
   }
 }
 
 .sold-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 .sold-item {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  align-items: center;
+  gap: 8px;
 }
 
 .actions {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
   bottom: 0;
   left: 0;
   width: 100%;

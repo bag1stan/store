@@ -76,29 +76,40 @@
               display: flex;
               justify-content: space-between;
             ">
-            <span>{{ soldGroup.controls['title'].value }}</span>
-
-            <div style="display: flex; gap: 16px; align-items: center">
-              <span>{{ soldGroup.controls['amount'].value }} шт.</span>
-
-              @let myCost = soldGroup.controls['myCost'].value;
-              @let myCostSold = myCost * soldGroup.controls['sold'].value;
-
-              @switch (currentShowCost()) {
-                @case (currencies.RUB) {
-                  <app-cost-chip
-                    appearance="secondary"
-                    [suffix]="currencies.RUB"
-                    [value]="myCostSold / kztCurrency()" />
-                }
-                @case (currencies.KZT) {
-                  <app-cost-chip
-                    [suffix]="currencies.KZT"
-                    [value]="myCostSold" />
-                }
-              }
-            </div>
+            <span style="flex: 1 0 auto">{{
+              soldGroup.controls['title'].value
+            }}</span>
+            <span>{{ soldGroup.controls['amount'].value }} шт.</span>
           </tui-chip>
+
+          @if (currentShowCost() !== null) {
+            @let myCost = soldGroup.controls['myCost'].value;
+            @let myCostSold = myCost * soldGroup.controls['sold'].value;
+
+            @switch (currentShowCost()) {
+              @case (currencies.RUB) {
+                <app-cost-chip
+                  style="
+                    flex: 0 0 100px;
+                    display: flex;
+                    justify-content: center;
+                  "
+                  appearance="secondary"
+                  [suffix]="currencies.RUB"
+                  [value]="myCostSold / kztCurrency()" />
+              }
+              @case (currencies.KZT) {
+                <app-cost-chip
+                  style="
+                    flex: 0 0 100px;
+                    display: flex;
+                    justify-content: center;
+                  "
+                  [suffix]="currencies.KZT"
+                  [value]="myCostSold" />
+              }
+            }
+          }
 
           <tui-textfield
             style="min-width: 60px; max-width: fit-content"
@@ -121,7 +132,11 @@
 
   <div class="actions">
     <div style="display: flex; gap: 16px; width: 100%; align-items: center">
-      <tui-select style="flex: 1 0 auto" [formControl]="cellItemControl">
+      <tui-select
+        style="flex: 1 0 auto"
+        tuiTextfieldSize="m"
+        [tuiTextfieldLabelOutside]="true"
+        [formControl]="cellItemControl">
         Добавить товар к продаже
         <input
           disabled
@@ -148,10 +163,10 @@
         size="m"
         [appearance]="
           currentShowCost() === null
-            ? 'flat-destructive'
+            ? 'secondary-destructive'
             : currentShowCost() === currencies.RUB
-              ? 'flat-grayscale'
-              : 'flat'
+              ? 'secondary-grayscale'
+              : 'secondary'
         "
         [iconStart]="
           currentShowCost() === null
